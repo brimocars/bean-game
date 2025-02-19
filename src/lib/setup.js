@@ -135,6 +135,8 @@ const startGame = (gameId) => {
   const shuffledDeck = shuffle(deck);
   gameObject.draw = [];
   gameObject.discard = [];
+  gameObject.timesShuffled = 0;
+  gameObject.activeTrades = [];
 
   for (let i = 0; i < shuffledDeck.length; i++) {
     const player = gameObject.players[Math.floor(i / 5)];

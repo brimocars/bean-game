@@ -6,6 +6,7 @@ const createGame = (req, res) => {
     const gameObject = lib.createGame(player);
     res.send({ message: 'Game created!', gameObject });
   } catch (error) {
+    console.log(`create game: ${error}`);
     res.status(400).send({ message: error.message });
   }
 };
@@ -13,20 +14,22 @@ const createGame = (req, res) => {
 const joinGame = (req, res) => {
   try {
     const { player } = req.body;
-    //const { gameId } = req.query;
-    const gameObject = lib.joinGame(player);
+    const { gameId } = req.query;
+    const gameObject = lib.joinGame(player, gameId);
     res.send({ message: `Player ${player.name} joined game`, gameObject });
   } catch (error) {
+    console.log(`join game: ${error}`);
     res.status(400).send({ message: error.message });
   }
 }
 
 const startGame = (req, res) => {
   try {
-    const { player } = req.body;
-    const gameObject = lib.startGame(player);
+    const { gameId } = req.query;
+    const gameObject = lib.startGame(gameId);
     res.send({ message: 'Game started!', gameObject });
   } catch (error) {
+    console.log(`start game: ${error}`);
     res.status(400).send({ message: error.message });
   }
 };

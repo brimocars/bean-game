@@ -1,0 +1,431 @@
+{
+	"info": {
+		"_postman_id": "4b48fa66-8927-4351-94ce-cf0298b4b2a7",
+		"name": "Bean game",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "41580859"
+	},
+	"item": [
+		{
+			"name": "setup",
+			"item": [
+				{
+					"name": "create game",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const jsonData = JSON.parse(responseBody)\r",
+									"pm.environment.set(\"gameId\", jsonData.gameObject.gameId);\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"player\": {\r\n        \"name\": \"a\"\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:3000/setup",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"setup"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "join 1",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"player\": {\r\n        \"name\": \"b\"\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:3000/setup/join?gameId={{gameId}}",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"setup",
+								"join"
+							],
+							"query": [
+								{
+									"key": "gameId",
+									"value": "{{gameId}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "join 2",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"player\": {\r\n        \"name\": \"c\"\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:3000/setup/join?gameId={{gameId}}",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"setup",
+								"join"
+							],
+							"query": [
+								{
+									"key": "gameId",
+									"value": "{{gameId}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "join 3",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"player\": {\r\n        \"name\": \"d\"\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:3000/setup/join?gameId={{gameId}}",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"setup",
+								"join"
+							],
+							"query": [
+								{
+									"key": "gameId",
+									"value": "{{gameId}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "start game",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "localhost:3000/setup/start?gameId={{gameId}}",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"setup",
+								"start"
+							],
+							"query": [
+								{
+									"key": "gameId",
+									"value": "{{gameId}}"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "play",
+			"item": [
+				{
+					"name": "plant from hand",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"fieldIndex\": 0\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:3000/play/plantFromHand?gameId={{gameId}}",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"play",
+								"plantFromHand"
+							],
+							"query": [
+								{
+									"key": "gameId",
+									"value": "{{gameId}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "turn",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"fieldIndex\": 0 \r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:3000/play/turn?gameId={{gameId}}",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"play",
+								"turn"
+							],
+							"query": [
+								{
+									"key": "gameId",
+									"value": "{{gameId}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "offer trade from active",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const jsonData = JSON.parse(responseBody)\r",
+									"pm.environment.set(\"tradeId\", jsonData.gameObject.activeTrades[0].tradeId);\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"trader\": \"d\",\r\n    \"tradee\": \"b\",\r\n    \"cardsToGive\": {\r\n        // \"turnedCards\": [0],\r\n        \"hand\": [0, 1, 2]\r\n    },\r\n    \"cardsToReceive\": [\"red\", \"red\", \"red\"]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:3000/play/trade/offer?gameId={{gameId}}",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"play",
+								"trade",
+								"offer"
+							],
+							"query": [
+								{
+									"key": "gameId",
+									"value": "{{gameId}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "accept trade",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"tradeId\": \"{{tradeId}}\",\r\n    \"chosenCardsToReceive\": {\r\n        // \"turnedCards\": [1],\r\n        \"hand\": [0, 3, 4]\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:3000/play/trade/accept?gameId={{gameId}}",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"play",
+								"trade",
+								"accept"
+							],
+							"query": [
+								{
+									"key": "gameId",
+									"value": "{{gameId}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "harvest",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"player\": \"a\",\r\n    \"fieldIndex\": 0\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:3000/play/harvest?gameId={{gameId}}",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"play",
+								"harvest"
+							],
+							"query": [
+								{
+									"key": "gameId",
+									"value": "{{gameId}}"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "get game",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:3000/game?gameId={{gameId}}",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"game"
+					],
+					"query": [
+						{
+							"key": "gameId",
+							"value": "{{gameId}}"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

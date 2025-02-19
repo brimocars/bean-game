@@ -3,15 +3,12 @@ const { v4: uuidv4 } = require('uuid');
 const gameObject = require('../db/gameObject.js');
 const { Phases } = require('./utils/enums.js');
 
-const plantFromHand = (player, fieldIndex) => {
-  if (!gameObject.gameId) {
+const plantFromHand = (gameId, fieldIndex) => {
+  if (gameObject.gameId !== gameId) {
     throw new Error('Game not found');
   }
   
   const activePlayer = gameObject.players[gameObject.activePlayerIndex];
-  if (activePlayer.name !== player.name) {
-    throw new Error('Not your turn');
-  }
 
   const fieldToPlantIn = activePlayer.fields[fieldIndex];
   if (!fieldToPlantIn) {
@@ -23,22 +20,22 @@ const plantFromHand = (player, fieldIndex) => {
   }
 
   if (activePlayer.hand.length === 0) {
-    gameObject.phase = Phases.DRAW;
-    return gameObject;
+    throw new Error('No cards to plant');
   }
 
-  if (fieldToPlantIn.length === 0 || fieldToPlantIn[0].name === activePlayer.hand[0].name) {
+  if (fieldToPlantIn.amount === 0 || fieldToPlantIn.card?.name === activePlayer.hand[0].name) {
     const cardToPlant = activePlayer.hand.shift();
-    fieldToPlantIn.push(cardToPlant);
+    fieldToPlantIn.amount++;
+    fieldToPlantIn.card = cardToPlant;
     activePlayer.plantedThisTurn = activePlayer.plantedThisTurn ? activePlayer.plantedThisTurn + 1 : 1;
-    return gameObject;
+    return { gameObject, planted: `${fieldToPlantIn.amount} ${cardToPlant.name}` };
   } else {
     throw new Error('Unable to plant in occupied field');
   }
 }
 
-const turn = () => {
-  if (!gameObject.gameId) {
+const turn = (gameId) => {
+  if (gameObject.gameId !== gameId) {
     throw new Error('Game not found');
   }
 
@@ -77,15 +74,15 @@ const turn = () => {
   }
 
   gameObject.turnedCards = turnedCards;
-  return gameObject;
+  return { gameObject, turnedCards: turnedCards.reduce((str, card) => {return str + `${card.name}, `}, ''), };
 }
 
 const validateTrade = (trader, tradee, cardsToGive, cardsToReceive) => {
 
 }
 
-const offerTrade = (traderName, tradeeName, cardsToGive, cardsToReceive) => {
-  if (!gameObject.gameId) {
+const offerTrade = (gameId, traderName, tradeeName, cardsToGive, cardsToReceive) => {
+  if (gameObject.gameId !== gameId) {
     throw new Error('Game not found');
   }
   if (gameObject.phase !== Phases.TRADE) {
@@ -102,11 +99,11 @@ const offerTrade = (traderName, tradeeName, cardsToGive, cardsToReceive) => {
   }
 
   const activePlayer = gameObject.players[gameObject.activePlayerIndex];
-  if (activePlayer.name !== trader.name && activePlayer !== tradee.name) {
+  if (activePlayer.name !== traderName && activePlayer !== tradeeName) {
     throw new Error('Cannot trade between players not currently taking their turns');
   }
-  const trader = gameObject.find((p) => p.name === trader.name);
-  const tradee = gameObject.find((p) => p.name === tradee.name);
+  const trader = gameObject.players.find((p) => p.name === traderName);
+  const tradee = gameObject.players.find((p) => p.name === tradeeName);
   if (!trader || !tradee) {
     throw new Error('Player not found');
   }
@@ -132,7 +129,7 @@ const offerTrade = (traderName, tradeeName, cardsToGive, cardsToReceive) => {
   if (tradee === activePlayer) {
     tradeeCardsAmount += turnedCards.length;
   }
-  if (tradeeCardsAmount > cardsToReceive.length) {
+  if (tradeeCardsAmount < cardsToReceive.length) {
     throw new Error('Tradee does not have enough cards to give');
   }
 
@@ -144,11 +141,11 @@ const offerTrade = (traderName, tradeeName, cardsToGive, cardsToReceive) => {
     cardsToReceive,
   }
   gameObject.activeTrades.push(trade);
-  return gameObject;
+  return { gameObject, newTrade: trade.tradeId };
 }
 
-const acceptTrade = (tradeId, chosenCardsToReceive) => {
-  if (!gameObject.gameId) {
+const acceptTrade = (gameId, tradeId, chosenCardsToReceive) => {
+  if (gameObject.gameId !== gameId) {
     throw new Error('Game not found');
   }
   if (gameObject.phase !== Phases.TRADE) {
@@ -228,8 +225,8 @@ const acceptTrade = (tradeId, chosenCardsToReceive) => {
   return gameObject;
 }
 
-const endTradingPhase = () => {
-  if (!gameObject.gameId) {
+const endTradingPhase = (gameId) => {
+  if (gameObject.gameId !== gameId) {
     throw new Error('Game not found');
   }
   if (gameObject.phase !== Phases.TRADE) {
@@ -245,10 +242,50 @@ const endTradingPhase = () => {
   return gameObject;
 }
 
+const harvest = (gameId, playerName, fieldIndex) => {
+  if (gameObject.gameId !== gameId) {
+    throw new Error('Game not found');
+  }
+  const player = gameObject.players.find((p) => p.name === playerName);
+  if (!player) {
+    throw new Error('Player not found');
+  }
+
+  const field = player.fields[fieldIndex];
+  if (!field) {
+    throw new Error('Invalid field index');
+  }
+  if (field.amount === 0 || !field.card) {
+    throw new Error('Cannot harvest empty field');
+  }
+
+  let moneyToGet = 0;
+  const amountInField = field.amount; 
+  field.card.amountToMoney.forEach((amount, index) => {
+    if (amountInField >= amount) {
+      moneyToGet = index;
+    }
+  })
+  
+  for (let i = moneyToGet; i < amountInField; i++) {
+    gameObject.discard.push(field.card);
+  }
+  player.money += moneyToGet;
+  field.amount = 0;
+  field.card = null;
+  return { gameObject, money: player.money, card: gameObject.discard[gameObject.discard.length - 1].name };
+}
+
+const plantFromPlantNow = (gameId, playerName, cardName, cardAmount, fieldIndex) => {
+
+}
+
 module.exports = {
   plantFromHand,
   turn,
   offerTrade,
   acceptTrade,
   endTradingPhase,
+  harvest,
+  plantFromPlantNow,
 }

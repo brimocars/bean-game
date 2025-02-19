@@ -6,12 +6,13 @@ const gameObject = require('../db/gameObject.js');
 
 
 const defaultBeans = {
-  wax: new Card([4, 7, 9, 11], 22, 'wax'),
-  blue: new Card([4, 6, 8, 10], 20, 'blue'),
-  chili: new Card([3, 6, 8, 9], 18, 'chili'),
-  stink: new Card([3, 5, 7, 8], 16, 'stink'),
-  green: new Card([3, 5, 6, 7], 14, 'green'),
-  soy: new Card([2, 4, 6, 7], 12, 'soy'),
+  //TODO: uncomment
+  // wax: new Card([4, 7, 9, 11], 22, 'wax'),
+  // blue: new Card([4, 6, 8, 10], 20, 'blue'),
+  // chili: new Card([3, 6, 8, 9], 18, 'chili'),
+  // stink: new Card([3, 5, 7, 8], 16, 'stink'),
+  // green: new Card([3, 5, 6, 7], 14, 'green'),
+  // soy: new Card([2, 4, 6, 7], 12, 'soy'),
   black: new Card([2, 4, 5, 6], 10, 'black'),
   red: new Card([2, 3, 4, 5], 8, 'red'),
 }
@@ -26,7 +27,7 @@ const createGame = (player) => {
     throw new Error('Game already created');
   }
 
-  if (gameObject.nextPhase) {
+  if (gameObject.phase) {
     throw new Error('Game already started');
   }
   
@@ -41,11 +42,11 @@ const createGame = (player) => {
 }
 
 const joinGame = (player, gameId) => {
-  if (!gameObject.gameId) {
+  if (gameObject.gameId !== gameId) {
     throw new Error('Game not found');
   }
 
-  if (gameObject.nextPhase) {
+  if (gameObject.phase) {
     throw new Error('Game already started');
   }
 
@@ -66,11 +67,11 @@ const joinGame = (player, gameId) => {
 }
 
 const startGame = (gameId) => {
-  if (!gameObject.gameId) {
+  if (gameObject.gameId !== gameId) {
     throw new Error('Game not found');
   }
 
-  if (gameObject.nextPhase) {
+  if (gameObject.phase) {
     throw new Error('Game already started');
   }
 
@@ -97,10 +98,12 @@ const startGame = (gameId) => {
         player.maxFields = 3;
       });
       break;
-    case 4, 5:
-      for (let i = 0; i < cocoa.amountInDeck; i++) {
-        deck.push(cocoa);
-      }
+    case 4:
+    case 5:
+      //TODO: uncomment
+      // for (let i = 0; i < cocoa.amountInDeck; i++) {
+      //   deck.push(cocoa);
+      // }
       for (let i = 0; i < garden.amountInDeck; i++) {
         deck.push(garden);
       }
@@ -108,7 +111,8 @@ const startGame = (gameId) => {
         player.maxFields = 2;
       });
       break;
-    case 6, 7:
+    case 6:
+    case 7:
       for (let i = 0; i < coffee.amountInDeck; i++) {
         deck.push(cocoa);
       }
@@ -120,10 +124,10 @@ const startGame = (gameId) => {
 
   gameObject.players.forEach((player) => {
     player.hand = [];
-    player.money = [];
+    player.money = 0;
     player.fields = [];
     for (let i = 0; i < player.maxFields; i++) {
-      player.fields.push([]);
+      player.fields.push({amount: 0, card: undefined});
     }
   });
 
@@ -147,7 +151,7 @@ const startGame = (gameId) => {
     }
   }
   gameObject.activePlayerIndex = 0;
-  gameObject.nextPhase = Phases.PLANT;
+  gameObject.phase = Phases.PLANT;
 
   return gameObject;
 }

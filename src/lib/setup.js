@@ -129,6 +129,7 @@ const startGame = (gameId) => {
     for (let i = 0; i < player.maxFields; i++) {
       player.fields.push({amount: 0, card: undefined});
     }
+    player.cardsToPlantNow = [];
   });
 
   shuffle(gameObject.players);
@@ -141,6 +142,7 @@ const startGame = (gameId) => {
   gameObject.discard = [];
   gameObject.timesShuffled = 0;
   gameObject.activeTrades = [];
+  gameObject.isOver = false;
 
   for (let i = 0; i < shuffledDeck.length; i++) {
     const player = gameObject.players[Math.floor(i / 5)];

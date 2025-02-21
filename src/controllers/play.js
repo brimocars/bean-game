@@ -64,7 +64,7 @@ const harvest = (req, res) => {
     const { gameId } = req.query;
     const { player, fieldIndex } = req.body;
     const { gameObject, money, card } = lib.harvest(gameId, player, fieldIndex);
-    res.send({ message: `harvested ${card} in field ${field} for ${money} money`, gameObject });
+    res.send({ message: `harvested ${card} in field ${fieldIndex} for ${money} money`, gameObject });
   } catch (error) {
     console.log(`harvest: ${error}`);
     res.status(400).send({ message: error.message });
@@ -74,8 +74,8 @@ const harvest = (req, res) => {
 const plantFromPlantNow = (req, res) => {
   try {
     const { gameId } = req.query;
-    const { playerName, cardName, cardAmount, fieldIndex } = req.body;
-    const { gameObject, planted } = lib.plantFromHand(gameId, playerName, cardName, cardAmonut, fieldIndex);
+    const { playerName, cardName, fieldIndex } = req.body;
+    const { gameObject, planted } = lib.plantFromPlantNow(gameId, playerName, cardName, fieldIndex);
     res.send({ message: `Field now has ${planted}`, gameObject });
   } catch (error) {
     console.log(`plant from hand: ${error}`);

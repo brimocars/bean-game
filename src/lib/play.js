@@ -3,11 +3,60 @@ const { v4: uuidv4 } = require('uuid');
 const gameObject = require('../db/gameObject.js');
 const { Phases } = require('./utils/enums.js');
 
+const shuffleDrawPileOrEndGame = () => {
+  if (gameObject.timesShuffled < 2) {
+    shuffle(gameObject.discard);
+    [gameObject.draw, gameObject.discard] = [gameObject.discard, gameObject.draw];
+    gameObject.timesShuffled += 1
+  } else {
+    gameObject.isOver = true
+  }
+  return gameObject.isOver;
+}
+
+const endGame = () => {
+  gameObject.players.forEach((player) => {
+    player.fields.forEach((field) => {
+      harvestField(player, field);
+    })
+  })
+
+  const gameResults = {};
+  gameObject.players.forEach((player) => {
+    gameResults[player.name] = player.money;
+    console.log(`player ${player.name} has ${player.money} money`);
+  })
+  const winner = gameObject.players.reduce((winner, player) => {
+    return player.money > winner.money ? player : winner;
+  }, { money: -1 });
+  console.log(`winner is ${winner.name} with ${winner.money} money`);
+  return gameResults;
+}
+
+const harvestField = (player, field) => {
+  let moneyToGet = 0;
+  const amountInField = field.amount;
+  const nameInField = field.card.name;
+  field.card.amountToMoney.forEach((amount, index) => {
+    if (amountInField >= amount) {
+      moneyToGet = index + 1;
+    }
+  })
+
+  for (let i = moneyToGet; i < amountInField; i++) {
+    gameObject.discard.push(field.card);
+  }
+  player.money += moneyToGet;
+  field.amount = 0;
+  field.card = null;
+  return nameInField;
+}
+
 const plantFromHand = (gameId, fieldIndex) => {
   if (gameObject.gameId !== gameId) {
     throw new Error('Game not found');
   }
-  
+
   const activePlayer = gameObject.players[gameObject.activePlayerIndex];
 
   const fieldToPlantIn = activePlayer.fields[fieldIndex];
@@ -58,15 +107,10 @@ const turn = (gameId) => {
     while (draw.length > 0 && turnedCards.length < 2) {
       turnedCards.push(draw.pop());
     }
-    if (gameObject.timesShuffled < 2) {
-      shuffle(discard);
-      [draw, discard] = [discard, draw];
-      gameObject.timesShuffled += 1
-      while (turnedCards.length < 2) {
+    if (!shuffleDrawPileOrEndGame()) {
+      while (draw.length > 0 && turnedCards.length < 2) {
         turnedCards.push(draw.pop());
       }
-    } else {
-      gameObject.isOver = true
     }
   } else {
     turnedCards.push(draw.pop());
@@ -74,7 +118,7 @@ const turn = (gameId) => {
   }
 
   gameObject.turnedCards = turnedCards;
-  return { gameObject, turnedCards: turnedCards.reduce((str, card) => {return str + `${card.name}, `}, ''), };
+  return { gameObject, turnedCards: turnedCards.reduce((str, card) => { return str + `${card.name}, ` }, ''), };
 }
 
 const validateTrade = (trader, tradee, cardsToGive, cardsToReceive) => {
@@ -155,7 +199,7 @@ const acceptTrade = (gameId, tradeId, chosenCardsToReceive) => {
   if (!trade) {
     throw new Error('Trade not found');
   }
-  
+
   const { traderName, tradeeName, cardsToGive, cardsToReceive } = trade;
   const trader = gameObject.players.find((p) => p.name === traderName);
   const tradee = gameObject.players.find((p) => p.name === tradeeName);
@@ -239,6 +283,7 @@ const endTradingPhase = (gameId) => {
       activePlayer.cardsToPlantNow.push(card);
     }
   })
+  gameObject.turnedCards = [];
   return gameObject;
 }
 
@@ -258,26 +303,92 @@ const harvest = (gameId, playerName, fieldIndex) => {
   if (field.amount === 0 || !field.card) {
     throw new Error('Cannot harvest empty field');
   }
-
-  let moneyToGet = 0;
-  const amountInField = field.amount; 
-  field.card.amountToMoney.forEach((amount, index) => {
-    if (amountInField >= amount) {
-      moneyToGet = index;
-    }
-  })
-  
-  for (let i = moneyToGet; i < amountInField; i++) {
-    gameObject.discard.push(field.card);
+  // protected bean clause
+  if (field.amount === 1 && player.fields.some((f) => f.amount > 1)) {
+    throw new Error('Protected bean clause: cannot harvest a field of 1 if you have another field with more than 1 bean');
   }
-  player.money += moneyToGet;
-  field.amount = 0;
-  field.card = null;
-  return { gameObject, money: player.money, card: gameObject.discard[gameObject.discard.length - 1].name };
+
+  const harvestedCardName = harvestField(player, field);
+
+  return { gameObject, money: player.money, card: harvestedCardName };
 }
 
-const plantFromPlantNow = (gameId, playerName, cardName, cardAmount, fieldIndex) => {
+const plantFromPlantNow = (gameId, playerName, cardName, fieldIndex) => {
+  if (gameObject.gameId !== gameId) {
+    throw new Error('Game not found');
+  }
+  if (gameObject.phase !== Phases.END) {
+    throw new Error('Incorrect phase');
+  }
+  const player = gameObject.players.find((p) => p.name === playerName);
+  if (!player) {
+    throw new Error('Player not found');
+  }
+  const field = player.fields[fieldIndex];
+  if (!field) {
+    throw new Error('Invalid field index');
+  }
+  const cardToPlantIndex = player.cardsToPlantNow.findIndex((card) => card.name === cardName);
+  if (cardToPlantIndex === -1) {
+    throw new Error('Card not found');
+  }
+  const cardToPlant = player.cardsToPlantNow[cardToPlantIndex];
+  if (field.amount !== 0 && field.card?.name !== cardToPlant.name) {
+    throw new Error('Cannot plant in occupied field');
+  }
+  field.amount++;
+  field.card = cardToPlant;
+  player.cardsToPlantNow.splice(cardToPlantIndex, 1);
 
+  const timeToMoveOn = gameObject.players.every((player) => !player.cardsToPlantNow || player.cardsToPlantNow.length === 0);
+  if (timeToMoveOn) {
+    if (gameObject.draw.length > gameObject.players.length) {
+      // deck will not run out
+      let playerIndexToDraw = gameObject.activePlayerIndex;
+      for (let i = 0; i < gameObject.players.length; i++) {
+        gameObject.players[playerIndexToDraw].hand.push(gameObject.draw.pop());
+        playerIndexToDraw++;
+        if (playerIndexToDraw >= gameObject.players.length) {
+          playerIndexToDraw = 0;
+        }
+      }
+    } else {
+      // deck will run out
+      const amountToDraw = gameObject.draw.length
+      const amountToDrawAfter = gameObject.players.length - amountToDraw;
+      let playerIndexToDraw = gameObject.activePlayerIndex;
+      for (let i = 0; i < amountToDraw; i++) {
+        gameObject.players[playerIndexToDraw].hand.push(gameObject.draw.pop());
+        playerIndexToDraw++;
+        if (playerIndexToDraw >= gameObject.players.length) {
+          playerIndexToDraw = 0;
+        }
+      }
+      if (!shuffleDrawPileOrEndGame()) {
+        for (let i = 0; i < amountToDrawAfter; i++) {
+          // TODO: maybe fix bug where if only 1 card is in the discard when it gets shuffled,
+          // shuffleDrawPileOrEndGame will need to be called again
+          const nextCard = gameObject.draw.pop();
+          if (nextCard) {
+            gameObject.players[playerIndexToDraw].hand.push(nextCard);
+          }
+          playerIndexToDraw++;
+          if (playerIndexToDraw >= gameObject.players.length) {
+            playerIndexToDraw = 0;
+          }
+        }
+      }
+
+      if (gameObject.isOver) {
+        gameObject.gameResults = endGame();
+      } else {
+        gameObject.phase = Phases.PLANT;
+        gameObject.activePlayerIndex = (gameObject.activePlayerIndex + 1) % gameObject.players.length;
+      }
+    }
+  }
+
+  return { gameObject, planted: `${field.amount} ${cardToPlant.name}` };
 }
 
 module.exports = {

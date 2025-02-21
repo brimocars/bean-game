@@ -1,9 +1,9 @@
 {
 	"info": {
-		"_postman_id": "4b48fa66-8927-4351-94ce-cf0298b4b2a7",
+		"_postman_id": "7f368a8f-3be5-458e-8c94-dcac61be2253",
 		"name": "Bean game",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "41580859"
+		"_exporter_id": "42412475"
 	},
 	"item": [
 		{
@@ -16,12 +16,19 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"const jsonData = JSON.parse(responseBody)\r",
+									"const jsonData = pm.response.json()\r",
 									"pm.environment.set(\"gameId\", jsonData.gameObject.gameId);\r",
 									""
 								],
 								"type": "text/javascript",
 								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"packages": {},
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -362,6 +369,44 @@
 					"response": []
 				},
 				{
+					"name": "end trading",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:3000/play/trade/end?gameId={{gameId}}",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"play",
+								"trade",
+								"end"
+							],
+							"query": [
+								{
+									"key": "gameId",
+									"value": "{{gameId}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "harvest",
 					"request": {
 						"auth": {
@@ -387,6 +432,43 @@
 							"path": [
 								"play",
 								"harvest"
+							],
+							"query": [
+								{
+									"key": "gameId",
+									"value": "{{gameId}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "plant from plant now",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"fieldIndex\": 0\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:3000/play/plantFromHand?gameId={{gameId}}",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"play",
+								"plantFromHand"
 							],
 							"query": [
 								{
@@ -426,6 +508,28 @@
 				}
 			},
 			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
 		}
 	]
 }

@@ -1,4 +1,4 @@
-const lib = require('../lib/setup.js');
+const lib = require('../model/setup.js');
 
 const createGame = (req, res) => {
   try {

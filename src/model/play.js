@@ -7,31 +7,29 @@ const shuffleDrawPileOrEndGame = () => {
   if (gameObject.timesShuffled < 2) {
     shuffle(gameObject.discard);
     [gameObject.draw, gameObject.discard] = [gameObject.discard, gameObject.draw];
-    gameObject.timesShuffled += 1
+    gameObject.timesShuffled += 1;
   } else {
-    gameObject.isOver = true
+    gameObject.isOver = true;
   }
   return gameObject.isOver;
-}
+};
 
 const endGame = () => {
   gameObject.players.forEach((player) => {
     player.fields.forEach((field) => {
       harvestField(player, field);
-    })
-  })
+    });
+  });
 
   const gameResults = {};
   gameObject.players.forEach((player) => {
     gameResults[player.name] = player.money;
     console.log(`player ${player.name} has ${player.money} money`);
-  })
-  const winner = gameObject.players.reduce((winner, player) => {
-    return player.money > winner.money ? player : winner;
-  }, { money: -1 });
+  });
+  const winner = gameObject.players.reduce((cWinner, player) => (player.money > cWinner.money ? player : cWinner), { money: -1 });
   console.log(`winner is ${winner.name} with ${winner.money} money`);
   return gameResults;
-}
+};
 
 const harvestField = (player, field) => {
   let moneyToGet = 0;
@@ -41,7 +39,7 @@ const harvestField = (player, field) => {
     if (amountInField >= amount) {
       moneyToGet = index + 1;
     }
-  })
+  });
 
   for (let i = moneyToGet; i < amountInField; i++) {
     gameObject.discard.push(field.card);
@@ -50,7 +48,7 @@ const harvestField = (player, field) => {
   field.amount = 0;
   field.card = null;
   return nameInField;
-}
+};
 
 const plantFromHand = (gameId, fieldIndex) => {
   if (gameObject.gameId !== gameId) {
@@ -78,10 +76,9 @@ const plantFromHand = (gameId, fieldIndex) => {
     fieldToPlantIn.card = cardToPlant;
     activePlayer.plantedThisTurn = activePlayer.plantedThisTurn ? activePlayer.plantedThisTurn + 1 : 1;
     return { gameObject, planted: `${fieldToPlantIn.amount} ${cardToPlant.name}` };
-  } else {
-    throw new Error('Unable to plant in occupied field');
   }
-}
+  throw new Error('Unable to plant in occupied field');
+};
 
 const turn = (gameId) => {
   if (gameObject.gameId !== gameId) {
@@ -93,7 +90,7 @@ const turn = (gameId) => {
   }
 
   const activePlayer = gameObject.players[gameObject.activePlayerIndex];
-  const { draw, discard } = gameObject;
+  const { draw } = gameObject;
 
   if (activePlayer.plantedThisTurn < 1) {
     throw new Error('Must plant at least one card');
@@ -118,12 +115,12 @@ const turn = (gameId) => {
   }
 
   gameObject.turnedCards = turnedCards;
-  return { gameObject, turnedCards: turnedCards.reduce((str, card) => { return str + `${card.name}, ` }, ''), };
-}
+  return { gameObject, turnedCards: turnedCards.reduce((str, card) => `${str}${card.name}, `, '') };
+};
 
-const validateTrade = (trader, tradee, cardsToGive, cardsToReceive) => {
+// const validateTrade = (trader, tradee, cardsToGive, cardsToReceive) => {
 
-}
+// };
 
 const offerTrade = (gameId, traderName, tradeeName, cardsToGive, cardsToReceive) => {
   if (gameObject.gameId !== gameId) {
@@ -161,13 +158,13 @@ const offerTrade = (gameId, traderName, tradeeName, cardsToGive, cardsToReceive)
       if (!turnedCards[cardIndex]) {
         throw new Error('Card not available');
       }
-    })
+    });
   }
   cardsToGive.hand?.forEach((cardIndex) => {
     if (!trader.hand[cardIndex]) {
       throw new Error('Card not available');
     }
-  })
+  });
 
   let tradeeCardsAmount = tradee.hand.length;
   if (tradee === activePlayer) {
@@ -183,10 +180,10 @@ const offerTrade = (gameId, traderName, tradeeName, cardsToGive, cardsToReceive)
     tradeeName,
     cardsToGive,
     cardsToReceive,
-  }
+  };
   gameObject.activeTrades.push(trade);
   return { gameObject, newTrade: trade.tradeId };
-}
+};
 
 const acceptTrade = (gameId, tradeId, chosenCardsToReceive) => {
   if (gameObject.gameId !== gameId) {
@@ -200,7 +197,9 @@ const acceptTrade = (gameId, tradeId, chosenCardsToReceive) => {
     throw new Error('Trade not found');
   }
 
-  const { traderName, tradeeName, cardsToGive, cardsToReceive } = trade;
+  const {
+    traderName, tradeeName, cardsToGive, cardsToReceive,
+  } = trade;
   const trader = gameObject.players.find((p) => p.name === traderName);
   const tradee = gameObject.players.find((p) => p.name === tradeeName);
   const activePlayer = gameObject.players[gameObject.activePlayerIndex];
@@ -216,28 +215,24 @@ const acceptTrade = (gameId, tradeId, chosenCardsToReceive) => {
       // if (!turnedCards[cardIndex]) {
       //   throw new Error('Card not available');
       // }
-      const foundCardIndex = cardsToReceive.findIndex((cardName) => {
-        return turnedCards[cardIndex].name === cardName && !usedTurnedIndexes.has(cardIndex);
-      });
+      const foundCardIndex = cardsToReceive.findIndex((cardName) => turnedCards[cardIndex].name === cardName && !usedTurnedIndexes.has(cardIndex));
       if (foundCardIndex === -1) {
         throw new Error('Invalid card');
       }
       usedTurnedIndexes.add(foundCardIndex);
-    })
+    });
   }
   const usedHandIndexes = new Set();
   chosenCardsToReceive.hand?.forEach((cardIndex) => {
     // if (!tradee.hand[cardIndex]) {
     //   throw new Error('Card not available');
     // }
-    const foundCardIndex = cardsToReceive.findIndex((cardName) => {
-      return tradee.hand[cardIndex].name === cardName && !usedHandIndexes.has(cardIndex);
-    });
+    const foundCardIndex = cardsToReceive.findIndex((cardName) => tradee.hand[cardIndex].name === cardName && !usedHandIndexes.has(cardIndex));
     if (foundCardIndex === -1) {
       throw new Error('Invalid card');
     }
     usedHandIndexes.add(foundCardIndex);
-  })
+  });
 
   // validation complete, we can move stuff around now
   tradee.cardsToPlantNow = [];
@@ -246,19 +241,19 @@ const acceptTrade = (gameId, tradeId, chosenCardsToReceive) => {
   chosenCardsToReceive.turnedCards?.forEach((cardIndex) => {
     trader.cardsToPlantNow.push(turnedCards[cardIndex]);
     turnedCards[cardIndex] = null;
-  })
+  });
   cardsToGive.turnedCards?.forEach((cardIndex) => {
     tradee.cardsToPlantNow.push(turnedCards[cardIndex]);
     turnedCards[cardIndex] = null;
-  })
+  });
   chosenCardsToReceive.hand?.forEach((cardIndex) => {
     trader.cardsToPlantNow.push(tradee.hand[cardIndex]);
     tradee.hand[cardIndex] = null;
-  })
+  });
   cardsToGive.hand?.forEach((cardIndex) => {
     tradee.cardsToPlantNow.push(trader.hand[cardIndex]);
     trader.hand[cardIndex] = null;
-  })
+  });
 
   trader.hand = trader.hand.filter((card) => card !== null);
   tradee.hand = tradee.hand.filter((card) => card !== null);
@@ -267,7 +262,7 @@ const acceptTrade = (gameId, tradeId, chosenCardsToReceive) => {
   // TODO: make this smart
   gameObject.activeTrades = [];
   return gameObject;
-}
+};
 
 const endTradingPhase = (gameId) => {
   if (gameObject.gameId !== gameId) {
@@ -282,10 +277,10 @@ const endTradingPhase = (gameId) => {
     if (card !== null) {
       activePlayer.cardsToPlantNow.push(card);
     }
-  })
+  });
   gameObject.turnedCards = [];
   return gameObject;
-}
+};
 
 const harvest = (gameId, playerName, fieldIndex) => {
   if (gameObject.gameId !== gameId) {
@@ -311,7 +306,7 @@ const harvest = (gameId, playerName, fieldIndex) => {
   const harvestedCardName = harvestField(player, field);
 
   return { gameObject, money: player.money, card: harvestedCardName };
-}
+};
 
 const plantFromPlantNow = (gameId, playerName, cardName, fieldIndex) => {
   if (gameObject.gameId !== gameId) {
@@ -340,7 +335,7 @@ const plantFromPlantNow = (gameId, playerName, cardName, fieldIndex) => {
   field.card = cardToPlant;
   player.cardsToPlantNow.splice(cardToPlantIndex, 1);
 
-  const timeToMoveOn = gameObject.players.every((player) => !player.cardsToPlantNow || player.cardsToPlantNow.length === 0);
+  const timeToMoveOn = gameObject.players.every((p) => !p.cardsToPlantNow || p.cardsToPlantNow.length === 0);
   if (timeToMoveOn) {
     if (gameObject.draw.length > gameObject.players.length) {
       // deck will not run out
@@ -354,7 +349,7 @@ const plantFromPlantNow = (gameId, playerName, cardName, fieldIndex) => {
       }
     } else {
       // deck will run out
-      const amountToDraw = gameObject.draw.length
+      const amountToDraw = gameObject.draw.length;
       const amountToDrawAfter = gameObject.players.length - amountToDraw;
       let playerIndexToDraw = gameObject.activePlayerIndex;
       for (let i = 0; i < amountToDraw; i++) {
@@ -389,7 +384,7 @@ const plantFromPlantNow = (gameId, playerName, cardName, fieldIndex) => {
   }
 
   return { gameObject, planted: `${field.amount} ${cardToPlant.name}` };
-}
+};
 
 module.exports = {
   plantFromHand,
@@ -399,4 +394,4 @@ module.exports = {
   endTradingPhase,
   harvest,
   plantFromPlantNow,
-}
+};

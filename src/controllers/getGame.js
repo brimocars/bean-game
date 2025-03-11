@@ -1,4 +1,4 @@
-const lib = require('../lib/getGame');
+const lib = require('../model/getGame');
 
 const getGame = (req, res) => {
   try {

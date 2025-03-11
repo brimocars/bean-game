@@ -1,4 +1,4 @@
-const lib = require('../lib/play.js');
+const lib = require('../model/play.js');
 
 const plantFromHand = (req, res) => {
   try {
@@ -10,7 +10,7 @@ const plantFromHand = (req, res) => {
     console.log(`plant from hand: ${error}`);
     res.status(400).send({ message: error.message });
   }
-}
+};
 
 const turn = (req, res) => {
   try {
@@ -21,19 +21,21 @@ const turn = (req, res) => {
     console.log(`turn: ${error}`);
     res.status(400).send({ message: error.message });
   }
-}
+};
 
 const offerTrade = (req, res) => {
   try {
     const { gameId } = req.query;
-    const { trader, tradee, cardsToGive, cardsToReceive } = req.body;
+    const {
+      trader, tradee, cardsToGive, cardsToReceive,
+    } = req.body;
     const { gameObject, newTrade } = lib.offerTrade(gameId, trader, tradee, cardsToGive, cardsToReceive);
     res.send({ message: `Trade offered: ${newTrade}`, gameObject });
   } catch (error) {
     console.log(`offer trade: ${error}`);
     res.status(400).send({ message: error.message });
   }
-}
+};
 
 const acceptTrade = (req, res) => {
   try {
@@ -46,7 +48,7 @@ const acceptTrade = (req, res) => {
 
     res.status(400).send({ message: error.message });
   }
-}
+};
 
 const endTradingPhase = (req, res) => {
   try {
@@ -57,7 +59,7 @@ const endTradingPhase = (req, res) => {
     console.log(`end trading phase: ${error}`);
     res.status(400).send({ message: error.message });
   }
-}
+};
 
 const harvest = (req, res) => {
   try {
@@ -69,7 +71,7 @@ const harvest = (req, res) => {
     console.log(`harvest: ${error}`);
     res.status(400).send({ message: error.message });
   }
-}
+};
 
 const plantFromPlantNow = (req, res) => {
   try {
@@ -81,8 +83,7 @@ const plantFromPlantNow = (req, res) => {
     console.log(`plant from hand: ${error}`);
     res.status(400).send({ message: error.message });
   }
-}
-
+};
 
 module.exports = {
   plantFromHand,

@@ -1,3 +1,3 @@
 const gameObject = {};
 
-module.exports = gameObject
+module.exports = gameObject;

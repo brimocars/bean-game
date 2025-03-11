@@ -4,9 +4,8 @@ const { Phases } = require('./utils/enums.js');
 const Card = require('./utils/card.js');
 const gameObject = require('../db/gameObject.js');
 
-
 const defaultBeans = {
-  //TODO: uncomment
+  // TODO: uncomment
   // wax: new Card([4, 7, 9, 11], 22, 'wax'),
   // blue: new Card([4, 6, 8, 10], 20, 'blue'),
   // chili: new Card([3, 6, 8, 9], 18, 'chili'),
@@ -15,7 +14,7 @@ const defaultBeans = {
   // soy: new Card([2, 4, 6, 7], 12, 'soy'),
   black: new Card([2, 4, 5, 6], 10, 'black'),
   red: new Card([2, 3, 4, 5], 8, 'red'),
-}
+};
 
 const coffee = new Card([4, 7, 10, 12], 24, 'coffee');
 const garden = new Card([0, 2, 3, 3], 6, 'garden');
@@ -30,7 +29,7 @@ const createGame = (player) => {
   if (gameObject.phase) {
     throw new Error('Game already started');
   }
-  
+
   if (typeof player.name !== 'string' || player.name.length === 0) {
     throw new Error('Invalid player name');
   }
@@ -39,7 +38,7 @@ const createGame = (player) => {
   gameObject.gameId = uuidv4();
 
   return gameObject;
-}
+};
 
 const joinGame = (player, gameId) => {
   if (gameObject.gameId !== gameId) {
@@ -53,7 +52,7 @@ const joinGame = (player, gameId) => {
   if (gameObject.players.length > 6) {
     throw new Error('Max players reached');
   }
-  
+
   if (typeof player.name !== 'string' || player.name.length === 0) {
     throw new Error('Invalid player name');
   }
@@ -64,7 +63,7 @@ const joinGame = (player, gameId) => {
 
   gameObject.players.push(player);
   return gameObject;
-}
+};
 
 const startGame = (gameId) => {
   if (gameObject.gameId !== gameId) {
@@ -80,7 +79,8 @@ const startGame = (gameId) => {
   }
 
   const deck = [];
-  for ([Key, value] of Object.entries(defaultBeans)) {
+  // eslint-disable-next-line no-unused-vars
+  for (const [key, value] of Object.entries(defaultBeans)) {
     for (let i = 0; i < value.amountInDeck; i++) {
       deck.push(value);
     }
@@ -100,7 +100,7 @@ const startGame = (gameId) => {
       break;
     case 4:
     case 5:
-      //TODO: uncomment
+      // TODO: uncomment
       // for (let i = 0; i < cocoa.amountInDeck; i++) {
       //   deck.push(cocoa);
       // }
@@ -120,6 +120,8 @@ const startGame = (gameId) => {
         player.maxFields = 2;
       });
       break;
+    default:
+      throw new Error('Invalid number of players');
   }
 
   gameObject.players.forEach((player) => {
@@ -127,7 +129,7 @@ const startGame = (gameId) => {
     player.money = 0;
     player.fields = [];
     for (let i = 0; i < player.maxFields; i++) {
-      player.fields.push({amount: 0, card: undefined});
+      player.fields.push({ amount: 0, card: undefined });
     }
     player.cardsToPlantNow = [];
   });
@@ -136,7 +138,7 @@ const startGame = (gameId) => {
   shuffle(deck);
   gameObject.players.forEach((player, index) => {
     player.index = index;
-  })
+  });
   const shuffledDeck = shuffle(deck);
   gameObject.draw = [];
   gameObject.discard = [];
@@ -156,10 +158,10 @@ const startGame = (gameId) => {
   gameObject.phase = Phases.PLANT;
 
   return gameObject;
-}
+};
 
 module.exports = {
   createGame,
   joinGame,
   startGame,
-}
+};

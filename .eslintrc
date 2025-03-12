@@ -5,12 +5,15 @@
       "no-plusplus": "off",
       "import/extensions": "off",
       "no-param-reassign": "off",
-      "max-len": "off",
+      "max-len": ["error", { "code": 120 }],
       "no-console": "off",
       "no-use-before-define": "off",
       "no-restricted-syntax": "off",
     },
     "parserOptions": {
       "ecmaVersion": 2020
+    },
+    "env": {
+      "jest": true
     }
   }

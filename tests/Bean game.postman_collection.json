@@ -198,6 +198,79 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "leave",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"player\": {\r\n        \"name\": \"b\"\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:3000/setup/leave?gameId={{gameId}}",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"setup",
+								"leave"
+							],
+							"query": [
+								{
+									"key": "gameId",
+									"value": "{{gameId}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"player\": {\r\n        \"name\": \"b\"\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:3000/setup?gameId={{gameId}}",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"setup"
+							],
+							"query": [
+								{
+									"key": "gameId",
+									"value": "{{gameId}}"
+								}
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
@@ -416,7 +489,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"player\": \"a\",\r\n    \"fieldIndex\": 0\r\n}",
+							"raw": "{\r\n    \"player\": \"c\",\r\n    \"fieldIndex\": 1\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -453,7 +526,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"fieldIndex\": 0\r\n}",
+							"raw": "{\r\n    \"fieldIndex\": 0,\r\n    \"playerName\": \"b\",\r\n    \"cardName\": \"black\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -461,14 +534,14 @@
 							}
 						},
 						"url": {
-							"raw": "localhost:3000/play/plantFromHand?gameId={{gameId}}",
+							"raw": "localhost:3000/play/plantFromPlantNow?gameId={{gameId}}",
 							"host": [
 								"localhost"
 							],
 							"port": "3000",
 							"path": [
 								"play",
-								"plantFromHand"
+								"plantFromPlantNow"
 							],
 							"query": [
 								{

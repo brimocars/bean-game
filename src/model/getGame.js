@@ -1,13 +1,13 @@
-const gameObject = require('../db/gameObject.js');
+const gameObjects = require('../db/gameObjects.js');
 
-const getGame = () => {
-  if (gameObject.gameId) {
+const getGame = (gameId) => {
+  const gameObject = gameObjects.get(gameId);
+  if (gameObject) {
     return gameObject;
-  } else {
-    throw new Error('Game not found');
   }
-}
+  throw new Error('Game not found');
+};
 
 module.exports = {
   getGame,
-}
+};

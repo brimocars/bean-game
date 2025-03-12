@@ -1,9 +1,10 @@
 const shuffle = require('shuffle-array');
 const { v4: uuidv4 } = require('uuid');
-const gameObject = require('../db/gameObject.js');
+const gameObjects = require('../db/gameObjects.js');
 const { Phases } = require('./utils/enums.js');
 
-const shuffleDrawPileOrEndGame = () => {
+const shuffleDrawPileOrEndGame = (gameId) => {
+  const gameObject = gameObjects.get(gameId);
   if (gameObject.timesShuffled < 2) {
     shuffle(gameObject.discard);
     [gameObject.draw, gameObject.discard] = [gameObject.discard, gameObject.draw];
@@ -14,10 +15,11 @@ const shuffleDrawPileOrEndGame = () => {
   return gameObject.isOver;
 };
 
-const endGame = () => {
+const endGame = (gameId) => {
+  const gameObject = gameObjects.get(gameId);
   gameObject.players.forEach((player) => {
     player.fields.forEach((field) => {
-      harvestField(player, field);
+      harvestField(gameId, player, field);
     });
   });
 
@@ -26,12 +28,13 @@ const endGame = () => {
     gameResults[player.name] = player.money;
     console.log(`player ${player.name} has ${player.money} money`);
   });
-  const winner = gameObject.players.reduce((cWinner, player) => (player.money > cWinner.money ? player : cWinner), { money: -1 });
+  const winner = gameObject.players.reduce((w, player) => (player.money > w.money ? player : w), { money: -1 });
   console.log(`winner is ${winner.name} with ${winner.money} money`);
   return gameResults;
 };
 
-const harvestField = (player, field) => {
+const harvestField = (gameId, player, field) => {
+  const gameObject = gameObjects.get(gameId);
   let moneyToGet = 0;
   const amountInField = field.amount;
   const nameInField = field.card.name;
@@ -51,7 +54,8 @@ const harvestField = (player, field) => {
 };
 
 const plantFromHand = (gameId, fieldIndex) => {
-  if (gameObject.gameId !== gameId) {
+  const gameObject = gameObjects.get(gameId);
+  if (!gameObject) {
     throw new Error('Game not found');
   }
 
@@ -81,7 +85,8 @@ const plantFromHand = (gameId, fieldIndex) => {
 };
 
 const turn = (gameId) => {
-  if (gameObject.gameId !== gameId) {
+  const gameObject = gameObjects.get(gameId);
+  if (!gameObject) {
     throw new Error('Game not found');
   }
 
@@ -104,7 +109,7 @@ const turn = (gameId) => {
     while (draw.length > 0 && turnedCards.length < 2) {
       turnedCards.push(draw.pop());
     }
-    if (!shuffleDrawPileOrEndGame()) {
+    if (!shuffleDrawPileOrEndGame(gameId)) {
       while (draw.length > 0 && turnedCards.length < 2) {
         turnedCards.push(draw.pop());
       }
@@ -123,7 +128,8 @@ const turn = (gameId) => {
 // };
 
 const offerTrade = (gameId, traderName, tradeeName, cardsToGive, cardsToReceive) => {
-  if (gameObject.gameId !== gameId) {
+  const gameObject = gameObjects.get(gameId);
+  if (!gameObject) {
     throw new Error('Game not found');
   }
   if (gameObject.phase !== Phases.TRADE) {
@@ -186,7 +192,8 @@ const offerTrade = (gameId, traderName, tradeeName, cardsToGive, cardsToReceive)
 };
 
 const acceptTrade = (gameId, tradeId, chosenCardsToReceive) => {
-  if (gameObject.gameId !== gameId) {
+  const gameObject = gameObjects.get(gameId);
+  if (!gameObject) {
     throw new Error('Game not found');
   }
   if (gameObject.phase !== Phases.TRADE) {
@@ -215,7 +222,8 @@ const acceptTrade = (gameId, tradeId, chosenCardsToReceive) => {
       // if (!turnedCards[cardIndex]) {
       //   throw new Error('Card not available');
       // }
-      const foundCardIndex = cardsToReceive.findIndex((cardName) => turnedCards[cardIndex].name === cardName && !usedTurnedIndexes.has(cardIndex));
+      const foundCardIndex = cardsToReceive
+        .findIndex((cardName) => turnedCards[cardIndex].name === cardName && !usedTurnedIndexes.has(cardIndex));
       if (foundCardIndex === -1) {
         throw new Error('Invalid card');
       }
@@ -227,7 +235,8 @@ const acceptTrade = (gameId, tradeId, chosenCardsToReceive) => {
     // if (!tradee.hand[cardIndex]) {
     //   throw new Error('Card not available');
     // }
-    const foundCardIndex = cardsToReceive.findIndex((cardName) => tradee.hand[cardIndex].name === cardName && !usedHandIndexes.has(cardIndex));
+    const foundCardIndex = cardsToReceive
+      .findIndex((cardName) => tradee.hand[cardIndex].name === cardName && !usedHandIndexes.has(cardIndex));
     if (foundCardIndex === -1) {
       throw new Error('Invalid card');
     }
@@ -265,7 +274,8 @@ const acceptTrade = (gameId, tradeId, chosenCardsToReceive) => {
 };
 
 const endTradingPhase = (gameId) => {
-  if (gameObject.gameId !== gameId) {
+  const gameObject = gameObjects.get(gameId);
+  if (!gameObject) {
     throw new Error('Game not found');
   }
   if (gameObject.phase !== Phases.TRADE) {
@@ -283,7 +293,8 @@ const endTradingPhase = (gameId) => {
 };
 
 const harvest = (gameId, playerName, fieldIndex) => {
-  if (gameObject.gameId !== gameId) {
+  const gameObject = gameObjects.get(gameId);
+  if (!gameObject) {
     throw new Error('Game not found');
   }
   const player = gameObject.players.find((p) => p.name === playerName);
@@ -300,16 +311,17 @@ const harvest = (gameId, playerName, fieldIndex) => {
   }
   // protected bean clause
   if (field.amount === 1 && player.fields.some((f) => f.amount > 1)) {
-    throw new Error('Protected bean clause: cannot harvest a field of 1 if you have another field with more than 1 bean');
+    throw new Error('Protected bean clause: cannot harvest a field of 1 if you have another field with more than 1');
   }
 
-  const harvestedCardName = harvestField(player, field);
+  const harvestedCardName = harvestField(gameId, player, field);
 
   return { gameObject, money: player.money, card: harvestedCardName };
 };
 
 const plantFromPlantNow = (gameId, playerName, cardName, fieldIndex) => {
-  if (gameObject.gameId !== gameId) {
+  const gameObject = gameObjects.get(gameId);
+  if (!gameObject) {
     throw new Error('Game not found');
   }
   if (gameObject.phase !== Phases.END) {
@@ -359,10 +371,11 @@ const plantFromPlantNow = (gameId, playerName, cardName, fieldIndex) => {
           playerIndexToDraw = 0;
         }
       }
-      if (!shuffleDrawPileOrEndGame()) {
+      if (!shuffleDrawPileOrEndGame(gameId)) {
         for (let i = 0; i < amountToDrawAfter; i++) {
           // TODO: maybe fix bug where if only 1 card is in the discard when it gets shuffled,
-          // shuffleDrawPileOrEndGame will need to be called again
+          // shuffleDrawPileOrEndGame will need to be called again. But honestly this is unlikely and I have more
+          // important things to do
           const nextCard = gameObject.draw.pop();
           if (nextCard) {
             gameObject.players[playerIndexToDraw].hand.push(nextCard);
@@ -375,7 +388,7 @@ const plantFromPlantNow = (gameId, playerName, cardName, fieldIndex) => {
       }
 
       if (gameObject.isOver) {
-        gameObject.gameResults = endGame();
+        gameObject.gameResults = endGame(gameId);
       } else {
         gameObject.phase = Phases.PLANT;
         gameObject.activePlayerIndex = (gameObject.activePlayerIndex + 1) % gameObject.players.length;

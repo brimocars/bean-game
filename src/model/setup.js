@@ -2,7 +2,7 @@ const shuffle = require('shuffle-array');
 const { v4: uuidv4 } = require('uuid');
 const { Phases } = require('./utils/enums.js');
 const Card = require('./utils/card.js');
-const gameObject = require('../db/gameObject.js');
+const gameObjects = require('../db/gameObjects.js');
 
 const defaultBeans = {
   // TODO: uncomment
@@ -21,27 +21,26 @@ const garden = new Card([0, 2, 3, 3], 6, 'garden');
 const cocoa = new Card([2, 2, 3, 4], 4, 'cocoa');
 
 const createGame = (player) => {
-  if (gameObject.gameId) {
-    // TODO: Remove when db is implemented
-    throw new Error('Game already created');
-  }
-
-  if (gameObject.phase) {
-    throw new Error('Game already started');
+  if (!player) {
+    throw new Error('No player');
   }
 
   if (typeof player.name !== 'string' || player.name.length === 0) {
     throw new Error('Invalid player name');
   }
 
-  gameObject.players = [player];
-  gameObject.gameId = uuidv4();
+  const gameId = uuidv4();
+  gameObjects.set(gameId, {
+    gameId,
+    players: [player],
+  });
 
-  return gameObject;
+  return gameObjects.get(gameId);
 };
 
 const joinGame = (player, gameId) => {
-  if (gameObject.gameId !== gameId) {
+  const gameObject = gameObjects.get(gameId);
+  if (!gameObject) {
     throw new Error('Game not found');
   }
 
@@ -66,7 +65,8 @@ const joinGame = (player, gameId) => {
 };
 
 const startGame = (gameId) => {
-  if (gameObject.gameId !== gameId) {
+  const gameObject = gameObjects.get(gameId);
+  if (!gameObject) {
     throw new Error('Game not found');
   }
 
@@ -160,8 +160,39 @@ const startGame = (gameId) => {
   return gameObject;
 };
 
+const deleteGame = (gameId) => {
+  const gameObject = gameObjects.get(gameId);
+  if (!gameObject) {
+    throw new Error('Game not found');
+  }
+  gameObjects.delete(gameId);
+  return gameId;
+};
+
+const leaveGame = (gameId, player) => {
+  const gameObject = gameObjects.get(gameId);
+  if (!gameObject) {
+    throw new Error('Game not found');
+  }
+  if (gameObject.phase) {
+    throw new Error('Game already started');
+  }
+  if (!gameObject.players.find((p) => p.name === player.name)) {
+    throw new Error(`Player '${player.name}' not in game`);
+  }
+  gameObject.players = gameObject.players.filter((p) => p.name !== player.name);
+  if (gameObject.players.length === 0) {
+    // delete game if no players are left
+    gameObjects.delete(gameId);
+    return {};
+  }
+  return gameObject;
+};
+
 module.exports = {
   createGame,
   joinGame,
   startGame,
+  deleteGame,
+  leaveGame,
 };

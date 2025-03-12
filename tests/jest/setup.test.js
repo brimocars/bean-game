@@ -67,4 +67,61 @@ describe('join game', () => {
     expect(() => model.joinGame({ name: 'b' }, gameId)).toThrow();
     expect(go.players).toHaveLength(2);
   });
+
+  it('should fail to join a game that doesn\t exist', () => {
+    expect(() => model.joinGame({ name: 'b' }, 'fake')).toThrow();
+  });
+});
+
+describe('start game', () => {
+  let gameId;
+  beforeEach(() => {
+    gameId = model.createGame({ name: 'a' }).gameId;
+  });
+  const addPlayersToGame = () => {
+    model.joinGame({ name: 'b' }, gameId);
+    model.joinGame({ name: 'c' }, gameId);
+  };
+
+  it('should start a game', () => {
+    const go = gameObjects.get(gameId);
+    addPlayersToGame();
+    model.startGame(gameId);
+    expect(go.phase).toBe('plant');
+  });
+
+  it('should fail to start a game without enough players', () => {
+    expect(() => model.startGame(gameId)).toThrow();
+  });
+
+  it('should fail to start a game that doesn\'t exist', () => {
+    addPlayersToGame();
+    expect(() => model.startGame('fake')).toThrow();
+  });
+
+  it('should fail to start a game that has already started', () => {
+    addPlayersToGame();
+    model.startGame(gameId);
+    expect(() => model.startGame(gameId)).toThrow();
+  });
+});
+
+describe('delete and leave game', () => {
+  let gameId;
+  beforeEach(() => {
+    gameId = model.createGame({ name: 'a' }).gameId;
+    model.joinGame({ name: 'b' }, gameId);
+    model.joinGame({ name: 'c' }, gameId);
+  });
+
+  it('should delete a game', () => {
+    model.deleteGame(gameId);
+    const go = gameObjects.get(gameId);
+    expect(go).toBeUndefined();
+  });
+
+  it('should fail to delete a game that doesn\'t exist', () => {
+    model.deleteGame(gameId);
+    expect(() => model.deleteGame(gameId)).toThrow();
+  });
 });

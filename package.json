@@ -7,7 +7,9 @@
     "start": "node ./src/app.js",
     "dev": "node --watch ./src/app.js",
     "lint": "eslint ./src ./tests/jest --fix",
-    "test": "jest"
+    "test": "jest --runInBand",
+    "pretest": "npm run lint",
+    "t": "jest --runInBand"
   },
   "keywords": [],
   "author": "",

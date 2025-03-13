@@ -97,7 +97,7 @@ const turn = (gameId) => {
   const activePlayer = gameObject.players[gameObject.activePlayerIndex];
   const { draw } = gameObject;
 
-  if (activePlayer.plantedThisTurn < 1) {
+  if (!activePlayer.plantedThisTurn) {
     throw new Error('Must plant at least one card');
   }
 

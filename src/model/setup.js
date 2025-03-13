@@ -144,6 +144,7 @@ const startGame = (gameId) => {
   gameObject.discard = [];
   gameObject.timesShuffled = 0;
   gameObject.activeTrades = [];
+  gameObject.turnedCards = [];
   gameObject.isOver = false;
 
   for (let i = 0; i < shuffledDeck.length; i++) {

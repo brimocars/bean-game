@@ -33,6 +33,7 @@ const createGame = (player) => {
   gameObjects.set(gameId, {
     gameId,
     players: [player],
+    updateId: uuidv4(),
   });
 
   return gameObjects.get(gameId);
@@ -61,6 +62,7 @@ const joinGame = (player, gameId) => {
   }
 
   gameObject.players.push(player);
+  gameObject.updateId = uuidv4();
   return gameObject;
 };
 
@@ -157,7 +159,7 @@ const startGame = (gameId) => {
   }
   gameObject.activePlayerIndex = 0;
   gameObject.phase = Phases.PLANT;
-
+  gameObject.updateId = uuidv4();
   return gameObject;
 };
 
@@ -187,6 +189,7 @@ const leaveGame = (gameId, player) => {
     gameObjects.delete(gameId);
     return {};
   }
+  gameObject.updateId = uuidv4();
   return gameObject;
 };
 

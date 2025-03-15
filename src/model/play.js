@@ -79,6 +79,7 @@ const plantFromHand = (gameId, fieldIndex) => {
     fieldToPlantIn.amount++;
     fieldToPlantIn.card = cardToPlant;
     activePlayer.plantedThisTurn = activePlayer.plantedThisTurn ? activePlayer.plantedThisTurn + 1 : 1;
+    gameObject.updateId = uuidv4();
     return { gameObject, planted: `${fieldToPlantIn.amount} ${cardToPlant.name}` };
   }
   throw new Error('Unable to plant in occupied field');
@@ -120,6 +121,7 @@ const turn = (gameId) => {
   }
 
   gameObject.turnedCards = turnedCards;
+  gameObject.updateId = uuidv4();
   return { gameObject, turnedCards: turnedCards.reduce((str, card) => `${str}${card.name}, `, '') };
 };
 
@@ -188,6 +190,7 @@ const offerTrade = (gameId, traderName, tradeeName, cardsToGive, cardsToReceive)
     cardsToReceive,
   };
   gameObject.activeTrades.push(trade);
+  gameObject.updateId = uuidv4();
   return { gameObject, newTrade: trade.tradeId };
 };
 
@@ -270,6 +273,7 @@ const acceptTrade = (gameId, tradeId, chosenCardsToReceive) => {
   // maybe cancel other active trades because stuff moved around
   // TODO: make this smart
   gameObject.activeTrades = [];
+  gameObject.updateId = uuidv4();
   return gameObject;
 };
 
@@ -289,6 +293,7 @@ const endTradingPhase = (gameId) => {
     }
   });
   gameObject.turnedCards = [];
+  gameObject.updateId = uuidv4();
   return gameObject;
 };
 
@@ -315,7 +320,7 @@ const harvest = (gameId, playerName, fieldIndex) => {
   }
 
   const harvestedCardName = harvestField(gameId, player, field);
-
+  gameObject.updateId = uuidv4();
   return { gameObject, money: player.money, card: harvestedCardName };
 };
 
@@ -395,7 +400,7 @@ const plantFromPlantNow = (gameId, playerName, cardName, fieldIndex) => {
       }
     }
   }
-
+  gameObject.updateId = uuidv4();
   return { gameObject, planted: `${field.amount} ${cardToPlant.name}` };
 };
 

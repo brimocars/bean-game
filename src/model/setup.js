@@ -31,7 +31,7 @@ const createGame = (player) => {
   }
 
   const gameId = uuidv4();
-  const gameCode = crypto.randomInt(100000, 999999);
+  const gameCode = `${crypto.randomInt(100000, 999999)}`;
   gameObjects.set(gameId, {
     gameId,
     gameCode,

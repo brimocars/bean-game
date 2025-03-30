@@ -156,7 +156,7 @@ const offerTrade = (gameId, traderName, tradeeName, cardsToGive, cardsToReceive)
   if (!trader || !tradee) {
     throw new Error('Player not found');
   }
-  if (cardsToGive.turnedCards && trader !== activePlayer) {
+  if (cardsToGive.turnedCards.length && trader.name !== activePlayer.name) {
     throw new Error('Cannot trade away turned cards unless you are the active player');
   }
 

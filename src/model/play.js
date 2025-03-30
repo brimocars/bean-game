@@ -148,7 +148,7 @@ const offerTrade = (gameId, traderName, tradeeName, cardsToGive, cardsToReceive)
   }
 
   const activePlayer = gameObject.players[gameObject.activePlayerIndex];
-  if (activePlayer.name !== traderName && activePlayer !== tradeeName) {
+  if (activePlayer.name !== traderName && activePlayer.name !== tradeeName) {
     throw new Error('Cannot trade between players not currently taking their turns');
   }
   const trader = gameObject.players.find((p) => p.name === traderName);

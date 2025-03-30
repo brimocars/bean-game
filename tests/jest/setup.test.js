@@ -29,42 +29,45 @@ describe('create game', () => {
 });
 
 describe('join game', () => {
+  let gameCode;
   let gameId;
   beforeEach(() => {
-    gameId = setup.createGame({ name: 'a' }).gameId;
+    const game = setup.createGame({ name: 'a' });
+    gameCode = game.gameCode;
+    gameId = game.gameId;
   });
 
   it('should join a game', () => {
-    const go = setup.joinGame({ name: 'b' }, gameId);
+    const go = setup.joinGame({ name: 'b' }, gameCode);
     expect(go.players).toHaveLength(2);
   });
 
   it('should join a game with multiple players', () => {
     const go = gameObjects.get(gameId);
-    setup.joinGame({ name: 'b' }, gameId);
-    setup.joinGame({ name: 'c' }, gameId);
-    setup.joinGame({ name: 'd' }, gameId);
-    setup.joinGame({ name: 'e' }, gameId);
-    setup.joinGame({ name: 'f' }, gameId);
+    setup.joinGame({ name: 'b' }, gameCode);
+    setup.joinGame({ name: 'c' }, gameCode);
+    setup.joinGame({ name: 'd' }, gameCode);
+    setup.joinGame({ name: 'e' }, gameCode);
+    setup.joinGame({ name: 'f' }, gameCode);
     expect(go.players).toHaveLength(6);
   });
 
   it('should fail to join a game with too many players', () => {
     const go = gameObjects.get(gameId);
-    setup.joinGame({ name: 'b' }, gameId);
-    setup.joinGame({ name: 'c' }, gameId);
-    setup.joinGame({ name: 'd' }, gameId);
-    setup.joinGame({ name: 'e' }, gameId);
-    setup.joinGame({ name: 'f' }, gameId);
-    setup.joinGame({ name: 'g' }, gameId);
-    expect(() => setup.joinGame({ name: 'h' }, gameId)).toThrow();
+    setup.joinGame({ name: 'b' }, gameCode);
+    setup.joinGame({ name: 'c' }, gameCode);
+    setup.joinGame({ name: 'd' }, gameCode);
+    setup.joinGame({ name: 'e' }, gameCode);
+    setup.joinGame({ name: 'f' }, gameCode);
+    setup.joinGame({ name: 'g' }, gameCode);
+    expect(() => setup.joinGame({ name: 'h' }, gameCode)).toThrow();
     expect(go.players).toHaveLength(7);
   });
 
   it('should fail to join with a duplicate name', () => {
     const go = gameObjects.get(gameId);
-    setup.joinGame({ name: 'b' }, gameId);
-    expect(() => setup.joinGame({ name: 'b' }, gameId)).toThrow();
+    setup.joinGame({ name: 'b' }, gameCode);
+    expect(() => setup.joinGame({ name: 'b' }, gameCode)).toThrow();
     expect(go.players).toHaveLength(2);
   });
 
@@ -74,13 +77,16 @@ describe('join game', () => {
 });
 
 describe('start game', () => {
+  let gameCode;
   let gameId;
   beforeEach(() => {
-    gameId = setup.createGame({ name: 'a' }).gameId;
+    const game = setup.createGame({ name: 'a' });
+    gameCode = game.gameCode;
+    gameId = game.gameId;
   });
   const addPlayersToGame = () => {
-    setup.joinGame({ name: 'b' }, gameId);
-    setup.joinGame({ name: 'c' }, gameId);
+    setup.joinGame({ name: 'b' }, gameCode);
+    setup.joinGame({ name: 'c' }, gameCode);
   };
 
   it('should start a game', () => {
@@ -107,11 +113,14 @@ describe('start game', () => {
 });
 
 describe('delete and leave game', () => {
+  let gameCode;
   let gameId;
   beforeEach(() => {
-    gameId = setup.createGame({ name: 'a' }).gameId;
-    setup.joinGame({ name: 'b' }, gameId);
-    setup.joinGame({ name: 'c' }, gameId);
+    const game = setup.createGame({ name: 'a' });
+    gameCode = game.gameCode;
+    gameId = game.gameId;
+    setup.joinGame({ name: 'b' }, gameCode);
+    setup.joinGame({ name: 'c' }, gameCode);
   });
 
   it('should delete a game', () => {

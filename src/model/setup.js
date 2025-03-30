@@ -1,3 +1,4 @@
+const crypto = require('crypto');
 const shuffle = require('shuffle-array');
 const { v4: uuidv4 } = require('uuid');
 const { Phases } = require('./utils/enums.js');
@@ -30,8 +31,10 @@ const createGame = (player) => {
   }
 
   const gameId = uuidv4();
+  const gameCode = crypto.randomInt(100000, 999999);
   gameObjects.set(gameId, {
     gameId,
+    gameCode,
     players: [player],
     updateId: uuidv4(),
   });
@@ -39,8 +42,8 @@ const createGame = (player) => {
   return gameObjects.get(gameId);
 };
 
-const joinGame = (player, gameId) => {
-  const gameObject = gameObjects.get(gameId);
+const joinGame = (player, gameCode) => {
+  const gameObject = Array.from(gameObjects.values()).find((game) => game.gameCode === gameCode);
   if (!gameObject) {
     throw new Error('Game not found');
   }

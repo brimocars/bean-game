@@ -14,8 +14,8 @@ const createGame = (req, res) => {
 const joinGame = (req, res) => {
   try {
     const { player } = req.body;
-    const { gameId } = req.query;
-    const gameObject = model.joinGame(player, gameId);
+    const { gameCode } = req.query;
+    const gameObject = model.joinGame(player, gameCode);
     res.send({ message: `Player ${player.name} joined game`, gameObject });
   } catch (error) {
     console.log(`join game: ${error.stack}`);

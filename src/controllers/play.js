@@ -54,7 +54,7 @@ const denyTrade = (req, res) => {
     const { gameId } = req.query;
     const { tradeId } = req.body;
     const gameObject = model.denyTrade(gameId, tradeId);
-    res.send({ message: 'Trade denied and delete', gameObject });
+    res.send({ message: 'Trade denied and deleted', gameObject });
   } catch (error) {
     console.log(`trade denied: ${error.stack}`);
     res.status(400).send({ message: error.message });

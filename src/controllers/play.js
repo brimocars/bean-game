@@ -45,7 +45,18 @@ const acceptTrade = (req, res) => {
     res.send({ message: 'Trade accepted', gameObject });
   } catch (error) {
     console.log(`trade accepted: ${error.stack}`);
+    res.status(400).send({ message: error.message });
+  }
+};
 
+const denyTrade = (req, res) => {
+  try {
+    const { gameId } = req.query;
+    const { tradeId } = req.body;
+    const gameObject = model.denyTrade(gameId, tradeId);
+    res.send({ message: 'Trade denied and delete', gameObject });
+  } catch (error) {
+    console.log(`trade denied: ${error.stack}`);
     res.status(400).send({ message: error.message });
   }
 };
@@ -90,6 +101,7 @@ module.exports = {
   turn,
   offerTrade,
   acceptTrade,
+  denyTrade,
   endTradingPhase,
   harvest,
   plantFromPlantNow,

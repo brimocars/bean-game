@@ -156,7 +156,7 @@ const offerTrade = (gameId, traderName, tradeeName, cardsToGive, cardsToReceive)
   if (!trader || !tradee) {
     throw new Error('Player not found');
   }
-  if (cardsToGive.turnedCards.length && trader.name !== activePlayer.name) {
+  if (cardsToGive.turnedCards?.length && trader.name !== activePlayer.name) {
     throw new Error('Cannot trade away turned cards unless you are the active player');
   }
 
@@ -247,8 +247,8 @@ const acceptTrade = (gameId, tradeId, chosenCardsToReceive) => {
   });
 
   // validation complete, we can move stuff around now
-  tradee.cardsToPlantNow = [];
-  trader.cardsToPlantNow = [];
+  tradee.cardsToPlantNow = tradee.cardsToPlantNow ?? [];
+  trader.cardsToPlantNow = trader.cardsToPlantNow ?? [];
 
   chosenCardsToReceive.turnedCards?.forEach((cardIndex) => {
     trader.cardsToPlantNow.push(turnedCards[cardIndex]);
@@ -277,6 +277,22 @@ const acceptTrade = (gameId, tradeId, chosenCardsToReceive) => {
   return gameObject;
 };
 
+const denyTrade = (gameId, tradeId) => {
+  const gameObject = gameObjects.get(gameId);
+  if (!gameObject) {
+    throw new Error('Game not found');
+  }
+  if (gameObject.phase !== Phases.TRADE) {
+    throw new Error('Incorrect phase');
+  }
+  const trade = gameObject.activeTrades.find((t) => t.tradeId === tradeId);
+  if (!trade) {
+    throw new Error('Trade not found');
+  }
+  gameObject.activeTrades = gameObject.activeTrades.filter((t) => t.tradeId !== tradeId);
+  return gameObject;
+};
+
 const endTradingPhase = (gameId) => {
   const gameObject = gameObjects.get(gameId);
   if (!gameObject) {
@@ -285,6 +301,7 @@ const endTradingPhase = (gameId) => {
   if (gameObject.phase !== Phases.TRADE) {
     throw new Error('Incorrect phase');
   }
+  gameObject.activeTrades = [];
   const activePlayer = gameObject.players[gameObject.activePlayerIndex];
   gameObject.phase = Phases.END;
   gameObject.turnedCards.forEach((card) => {
@@ -409,6 +426,7 @@ module.exports = {
   turn,
   offerTrade,
   acceptTrade,
+  denyTrade,
   endTradingPhase,
   harvest,
   plantFromPlantNow,

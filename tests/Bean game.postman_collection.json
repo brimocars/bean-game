@@ -18,7 +18,7 @@
 								"exec": [
 									"const jsonData = pm.response.json()\r",
 									"pm.environment.set(\"gameId\", jsonData.gameObject.gameId);\r",
-									""
+									"pm.environment.set(\"gameCode\", jsonData.gameObject.gameCode);"
 								],
 								"type": "text/javascript",
 								"packages": {}
@@ -27,8 +27,11 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"packages": {},
-								"type": "text/javascript"
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
 							}
 						}
 					],
@@ -48,11 +51,10 @@
 							}
 						},
 						"url": {
-							"raw": "localhost:3000/setup",
+							"raw": "{{baseUrl}}/setup",
 							"host": [
-								"localhost"
+								"{{baseUrl}}"
 							],
-							"port": "3000",
 							"path": [
 								"setup"
 							]
@@ -62,6 +64,19 @@
 				},
 				{
 					"name": "join 1",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const jsonData = pm.response.json()\r",
+									"pm.environment.set(\"gameId\", jsonData.gameObject.gameId);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
 					"request": {
 						"auth": {
 							"type": "noauth"
@@ -70,7 +85,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"player\": {\r\n        \"name\": \"b\"\r\n    }\r\n}",
+							"raw": "{\r\n    \"player\": {\r\n        \"name\": \"a\"\r\n    }\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -78,19 +93,18 @@
 							}
 						},
 						"url": {
-							"raw": "localhost:3000/setup/join?gameId={{gameId}}",
+							"raw": "{{baseUrl}}/setup/join?gameCode={{gameCode}}",
 							"host": [
-								"localhost"
+								"{{baseUrl}}"
 							],
-							"port": "3000",
 							"path": [
 								"setup",
 								"join"
 							],
 							"query": [
 								{
-									"key": "gameId",
-									"value": "{{gameId}}"
+									"key": "gameCode",
+									"value": "{{gameCode}}"
 								}
 							]
 						}
@@ -115,19 +129,18 @@
 							}
 						},
 						"url": {
-							"raw": "localhost:3000/setup/join?gameId={{gameId}}",
+							"raw": "{{baseUrl}}/setup/join?gameCode={{gameCode}}",
 							"host": [
-								"localhost"
+								"{{baseUrl}}"
 							],
-							"port": "3000",
 							"path": [
 								"setup",
 								"join"
 							],
 							"query": [
 								{
-									"key": "gameId",
-									"value": "{{gameId}}"
+									"key": "gameCode",
+									"value": "{{gameCode}}"
 								}
 							]
 						}
@@ -152,19 +165,18 @@
 							}
 						},
 						"url": {
-							"raw": "localhost:3000/setup/join?gameId={{gameId}}",
+							"raw": "{{baseUrl}}/setup/join?gameCode={{gameCode}}",
 							"host": [
-								"localhost"
+								"{{baseUrl}}"
 							],
-							"port": "3000",
 							"path": [
 								"setup",
 								"join"
 							],
 							"query": [
 								{
-									"key": "gameId",
-									"value": "{{gameId}}"
+									"key": "gameCode",
+									"value": "{{gameCode}}"
 								}
 							]
 						}
@@ -180,11 +192,10 @@
 						"method": "POST",
 						"header": [],
 						"url": {
-							"raw": "localhost:3000/setup/start?gameId={{gameId}}",
+							"raw": "{{baseUrl}}/setup/start?gameId={{gameId}}",
 							"host": [
-								"localhost"
+								"{{baseUrl}}"
 							],
-							"port": "3000",
 							"path": [
 								"setup",
 								"start"
@@ -217,11 +228,10 @@
 							}
 						},
 						"url": {
-							"raw": "localhost:3000/setup/leave?gameId={{gameId}}",
+							"raw": "{{baseUrl}}/setup/leave?gameId={{gameId}}",
 							"host": [
-								"localhost"
+								"{{baseUrl}}"
 							],
-							"port": "3000",
 							"path": [
 								"setup",
 								"leave"
@@ -246,7 +256,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"player\": {\r\n        \"name\": \"b\"\r\n    }\r\n}",
+							"raw": "",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -254,11 +264,10 @@
 							}
 						},
 						"url": {
-							"raw": "localhost:3000/setup?gameId={{gameId}}",
+							"raw": "{{baseUrl}}/setup?gameId={{gameId}}",
 							"host": [
-								"localhost"
+								"{{baseUrl}}"
 							],
-							"port": "3000",
 							"path": [
 								"setup"
 							],
@@ -295,11 +304,10 @@
 							}
 						},
 						"url": {
-							"raw": "localhost:3000/play/plantFromHand?gameId={{gameId}}",
+							"raw": "{{baseUrl}}/play/plantFromHand?gameId={{gameId}}",
 							"host": [
-								"localhost"
+								"{{baseUrl}}"
 							],
-							"port": "3000",
 							"path": [
 								"play",
 								"plantFromHand"
@@ -324,7 +332,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"fieldIndex\": 0 \r\n}",
+							"raw": "",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -332,11 +340,10 @@
 							}
 						},
 						"url": {
-							"raw": "localhost:3000/play/turn?gameId={{gameId}}",
+							"raw": "{{baseUrl}}/play/turn?gameId={{gameId}}",
 							"host": [
-								"localhost"
+								"{{baseUrl}}"
 							],
-							"port": "3000",
 							"path": [
 								"play",
 								"turn"
@@ -375,7 +382,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"trader\": \"d\",\r\n    \"tradee\": \"b\",\r\n    \"cardsToGive\": {\r\n        // \"turnedCards\": [0],\r\n        \"hand\": [0, 1, 2]\r\n    },\r\n    \"cardsToReceive\": [\"red\", \"red\", \"red\"]\r\n}",
+							"raw": "{\r\n    \"trader\": \"a\",\r\n    \"tradee\": \"b\",\r\n    \"cardsToGive\": {\r\n        // \"turnedCards\": [0],\r\n        \"hand\": [0, 1, 2]\r\n    },\r\n    \"cardsToReceive\": [\"black\"]\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -383,11 +390,10 @@
 							}
 						},
 						"url": {
-							"raw": "localhost:3000/play/trade/offer?gameId={{gameId}}",
+							"raw": "{{baseUrl}}/play/trade/offer?gameId={{gameId}}",
 							"host": [
-								"localhost"
+								"{{baseUrl}}"
 							],
-							"port": "3000",
 							"path": [
 								"play",
 								"trade",
@@ -413,7 +419,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"tradeId\": \"{{tradeId}}\",\r\n    \"chosenCardsToReceive\": {\r\n        // \"turnedCards\": [1],\r\n        \"hand\": [0, 3, 4]\r\n    }\r\n}",
+							"raw": "{\r\n    \"tradeId\": \"{{tradeId}}\",\r\n    \"chosenCardsToReceive\": {\r\n        \"turnedCards\": [0]\r\n        //\"hand\": [0, 3, 4]\r\n    }\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -421,15 +427,50 @@
 							}
 						},
 						"url": {
-							"raw": "localhost:3000/play/trade/accept?gameId={{gameId}}",
+							"raw": "{{baseUrl}}/play/trade/accept?gameId={{gameId}}",
 							"host": [
-								"localhost"
+								"{{baseUrl}}"
 							],
-							"port": "3000",
 							"path": [
 								"play",
 								"trade",
 								"accept"
+							],
+							"query": [
+								{
+									"key": "gameId",
+									"value": "{{gameId}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "deny trade",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"tradeId\": \"{{tradeId}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/play/trade?gameId={{gameId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"play",
+								"trade"
 							],
 							"query": [
 								{
@@ -459,11 +500,10 @@
 							}
 						},
 						"url": {
-							"raw": "localhost:3000/play/trade/end?gameId={{gameId}}",
+							"raw": "{{baseUrl}}/play/trade/end?gameId={{gameId}}",
 							"host": [
-								"localhost"
+								"{{baseUrl}}"
 							],
-							"port": "3000",
 							"path": [
 								"play",
 								"trade",
@@ -497,11 +537,10 @@
 							}
 						},
 						"url": {
-							"raw": "localhost:3000/play/harvest?gameId={{gameId}}",
+							"raw": "{{baseUrl}}/play/harvest?gameId={{gameId}}",
 							"host": [
-								"localhost"
+								"{{baseUrl}}"
 							],
-							"port": "3000",
 							"path": [
 								"play",
 								"harvest"
@@ -534,11 +573,10 @@
 							}
 						},
 						"url": {
-							"raw": "localhost:3000/play/plantFromPlantNow?gameId={{gameId}}",
+							"raw": "{{baseUrl}}/play/plantFromPlantNow?gameId={{gameId}}",
 							"host": [
-								"localhost"
+								"{{baseUrl}}"
 							],
-							"port": "3000",
 							"path": [
 								"play",
 								"plantFromPlantNow"
@@ -564,11 +602,10 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "localhost:3000/game?gameId={{gameId}}",
+					"raw": "{{baseUrl}}/game?gameId={{gameId}}",
 					"host": [
-						"localhost"
+						"{{baseUrl}}"
 					],
-					"port": "3000",
 					"path": [
 						"game"
 					],
@@ -603,6 +640,18 @@
 					""
 				]
 			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "",
+			"type": "default"
+		},
+		{
+			"key": "gameCode",
+			"value": "744914",
+			"type": "default"
 		}
 	]
 }

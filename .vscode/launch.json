@@ -11,8 +11,8 @@
       "type": "node-terminal"
     },
     {
-      "command": "npm run test",
-      "name": "npm run test",
+      "command": "npm run t",
+      "name": "npm run t",
       "request": "launch",
       "type": "node-terminal"
     },

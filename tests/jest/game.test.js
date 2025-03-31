@@ -330,6 +330,7 @@ jest.mock('../../src/db/gameObjects.js', () => {
 });
 
 const gameObject = gameObjects.get(defaultGameId);
+const getPlayer = (name) => gameObject.players.find((p) => p.name === name);
 
 describe('plant from hand', () => {
   it('should fail to turn before a card has been planted', () => {
@@ -378,3 +379,173 @@ describe('turn', () => {
     expect(() => play.turn(defaultGameId)).toThrow();
   });
 });
+
+describe('offer trade', () => {
+  it('should fail to offer a trade in a game that doesn\'t exist', () => {
+    expect(() => play.offerTrade('fake')).toThrow();
+  });
+  it('should fail to offer a trade with an invalid player', () => {
+    expect(() => play.offerTrade(defaultGameId, 'asdf', gameObject.players[0], { hand: [0] }, ['red'])).toThrow();
+  });
+  it('should fail to offer an empty trade', () => {
+    expect(() => play.offerTrade(defaultGameId, gameObject.players[0], gameObject.players[1], {}, [])).toThrow();
+  });
+  it('should fail to offer a trade with cards that don\'t exist', () => {
+    expect(() => play.offerTrade(
+      defaultGameId,
+      'd',
+      'a',
+      { hand: [13] },
+      ['red'],
+    )).toThrow();
+    expect(() => play.offerTrade(
+      defaultGameId,
+      'd',
+      'a',
+      { turnedCards: [10] },
+      ['red'],
+    )).toThrow();
+  });
+  it('should offer a trade', () => {
+    play.offerTrade(
+      defaultGameId,
+      'd',
+      'a',
+      { turnedCards: [0] },
+      ['red'],
+    );
+    expect(gameObject.activeTrades.length).toBe(1);
+  });
+  it('should offer another trade', () => {
+    play.offerTrade(
+      defaultGameId,
+      'd',
+      'a',
+      { hand: [0] },
+      ['black'],
+    );
+    expect(gameObject.activeTrades.length).toBe(2);
+  });
+  it('should offer yet another trade', () => {
+    play.offerTrade(
+      defaultGameId,
+      'a',
+      'd',
+      { hand: [0] },
+      ['black'],
+    );
+    expect(gameObject.activeTrades.length).toBe(3);
+  });
+  it('should fail to offer a trade from a non-active player with turned cards', () => {
+    expect(() => play.offerTrade(
+      defaultGameId,
+      'a',
+      'd',
+      { turnedCards: [0] },
+      ['black'],
+    )).toThrow();
+  });
+  it('should fail to offer between 2 non-active players', () => {
+    expect(() => play.offerTrade(
+      defaultGameId,
+      'b',
+      'a',
+      { hand: [0] },
+      ['black'],
+    )).toThrow();
+  });
+});
+
+describe('accept trade', () => {
+  it('should fail to accept a trade in a game that doesn\'t exist', () => {
+    expect(() => play.acceptTrade('fake')).toThrow();
+  });
+  it('should fail to accept a trade that doesn\'t exist', () => {
+    expect(() => play.acceptTrade(defaultGameId, 'fake')).toThrow();
+  });
+  it('should fail to accept a trade with turned cards when not the active player', () => {
+    expect(() => play.acceptTrade(defaultGameId, gameObject.activeTrades[2].tradeId, { turnedCards: [0] })).toThrow();
+  });
+  it('should fail to accept a trade with cards that don\'t match the offer', () => {
+    expect(() => play.acceptTrade(defaultGameId, gameObject.activeTrades[0].tradeId, { hand: [1] })).toThrow();
+  });
+  it('should accept a trade', () => {
+    const turnedOne = gameObject.turnedCards[0];
+    play.acceptTrade(defaultGameId, gameObject.activeTrades[0].tradeId, { hand: [0] });
+    expect(gameObject.activeTrades.length).toBe(0); // accepting a trade cancels other trades (for now)
+    const d = getPlayer('d');
+    const a = getPlayer('a');
+    expect(a.hand.length).toBe(4);
+    expect(d.cardsToPlantNow.length).toBe(1);
+    expect(d.cardsToPlantNow[0].name).toBe('red');
+    expect(a.cardsToPlantNow.length).toBe(1);
+    expect(a.cardsToPlantNow[0].name).toBe(turnedOne.name);
+  });
+  it('should accept a trade (after re-offering it)', () => {
+    play.offerTrade(
+      defaultGameId,
+      'a',
+      'd',
+      { hand: [2] },
+      ['black'],
+    );
+    const d = getPlayer('d');
+    const a = getPlayer('a');
+    expect(d.cardsToPlantNow.length).toBe(1);
+    console.log(gameObject.activeTrades);
+    console.log(gameObject.activeTrades[0].cardsToGive);
+    play.acceptTrade(defaultGameId, gameObject.activeTrades[0].tradeId, { hand: [1] });
+    expect(a.hand.length).toBe(3);
+    expect(d.cardsToPlantNow.length).toBe(2);
+    expect(d.cardsToPlantNow[1].name).toBe('garden');
+    expect(a.cardsToPlantNow.length).toBe(2);
+    expect(a.cardsToPlantNow[1].name).toBe('black');
+  });
+});
+
+describe('deny trade', () => {
+  it('should fail to deny a trade in a game that doesn\'t exist', () => {
+    expect(() => play.denyTrade('fake')).toThrow();
+  });
+  it('should fail to deny a trade that doesn\'t exist', () => {
+    expect(() => play.denyTrade(defaultGameId, 'fake')).toThrow();
+  });
+  it('should deny a trade', () => {
+    play.offerTrade(
+      defaultGameId,
+      'a',
+      'd',
+      { hand: [2] },
+      ['black'],
+    );
+    expect(gameObject.activeTrades.length).toBe(1);
+    play.denyTrade(defaultGameId, gameObject.activeTrades[0].tradeId);
+    expect(gameObject.activeTrades.length).toBe(0);
+  });
+});
+
+describe('end trading phase', () => {
+  it('should fail to end trading phase in a game that doesn\'t exist', () => {
+    expect(() => play.endTradingPhase('fake')).toThrow();
+  });
+  it('should end trading phase', () => {
+    play.offerTrade(
+      defaultGameId,
+      'a',
+      'd',
+      { hand: [2] },
+      ['black'],
+    );
+    const remainingTurned = gameObject.turnedCards[1];
+    play.endTradingPhase(defaultGameId);
+    expect(gameObject.phase).toBe('end');
+    expect(gameObject.activeTrades.length).toBe(0);
+    expect(getPlayer('d').cardsToPlantNow.length).toBe(3);
+    expect(gameObject.turnedCards.length).toBe(0);
+    expect(getPlayer('d').cardsToPlantNow[2].name).toBe(remainingTurned.name);
+  });
+});
+
+// plant from plant now
+// harvest
+// ending game stuff

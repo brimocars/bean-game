@@ -266,6 +266,7 @@ const acceptTrade = (gameId, tradeId, chosenCardsToReceive) => {
 
   trader.hand = trader.hand.filter((card) => card !== null);
   tradee.hand = tradee.hand.filter((card) => card !== null);
+  gameObject.turnedCards = turnedCards.filter((card) => card !== null);
 
   // maybe cancel other active trades because stuff moved around
   // TODO: make this smart

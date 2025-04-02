@@ -416,6 +416,8 @@ const plantFromPlantNow = (gameId, playerName, cardName, fieldIndex) => {
         gameObject.activePlayerIndex = (gameObject.activePlayerIndex + 1) % gameObject.players.length;
       }
     }
+    gameObject.phase = Phases.PLANT;
+    gameObject.activePlayerIndex = (gameObject.activePlayerIndex + 1) % gameObject.players.length;
   }
   gameObject.updateId = uuidv4();
   return { gameObject, planted: `${field.amount} ${cardToPlant.name}` };

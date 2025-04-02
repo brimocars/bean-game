@@ -536,7 +536,7 @@ describe('end trading phase', () => {
       { hand: [2] },
       ['black'],
     );
-    const remainingTurned = gameObject.turnedCards[1];
+    const remainingTurned = gameObject.turnedCards[0];
     play.endTradingPhase(defaultGameId);
     expect(gameObject.phase).toBe('end');
     expect(gameObject.activeTrades.length).toBe(0);

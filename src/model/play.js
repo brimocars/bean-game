@@ -411,9 +411,6 @@ const plantFromPlantNow = (gameId, playerName, cardName, fieldIndex) => {
 
       if (gameObject.isOver) {
         gameObject.gameResults = endGame(gameId);
-      } else {
-        gameObject.phase = Phases.PLANT;
-        gameObject.activePlayerIndex = (gameObject.activePlayerIndex + 1) % gameObject.players.length;
       }
     }
     gameObject.phase = Phases.PLANT;

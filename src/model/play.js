@@ -221,7 +221,7 @@ const acceptTrade = (gameId, tradeId, chosenCardsToReceive) => {
   const { turnedCards } = gameObject;
   if (tradee === activePlayer) {
     const usedTurnedIndexes = new Set();
-    chosenCardsToReceive.turnedCards?.forEach((n, cardIndex) => {
+    chosenCardsToReceive.turnedCards?.forEach((cardIndex) => {
       const foundCardIndex = cardsToReceive
         .findIndex((cardName) => turnedCards[cardIndex].name === cardName && !usedTurnedIndexes.has(cardIndex));
       if (foundCardIndex === -1) {

@@ -369,7 +369,7 @@ const plantFromPlantNow = (gameId, playerName, cardName, fieldIndex) => {
   field.card = cardToPlant;
   player.cardsToPlantNow.splice(cardToPlantIndex, 1);
 
-  const timeToMoveOn = gameObject.players.every((p) => !p.cardsToPlantNow || p.cardsToPlantNow.length === 0);
+  const timeToMoveOn = gameObject.players.every((p) => !p.cardsToPlantNow.length);
   if (timeToMoveOn) {
     if (gameObject.draw.length > gameObject.players.length) {
       // deck will not run out

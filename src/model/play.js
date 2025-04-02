@@ -222,9 +222,6 @@ const acceptTrade = (gameId, tradeId, chosenCardsToReceive) => {
   if (tradee === activePlayer) {
     const usedTurnedIndexes = new Set();
     chosenCardsToReceive.turnedCards?.forEach((n, cardIndex) => {
-      // if (!turnedCards[cardIndex]) {
-      //   throw new Error('Card not available');
-      // }
       const foundCardIndex = cardsToReceive
         .findIndex((cardName) => turnedCards[cardIndex].name === cardName && !usedTurnedIndexes.has(cardIndex));
       if (foundCardIndex === -1) {

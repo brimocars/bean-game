@@ -214,7 +214,7 @@ const acceptTrade = (gameId, tradeId, chosenCardsToReceive) => {
   const tradee = gameObject.players.find((p) => p.name === tradeeName);
   const activePlayer = gameObject.players[gameObject.activePlayerIndex];
 
-  if (chosenCardsToReceive.turnedCards && tradee !== activePlayer) {
+  if (chosenCardsToReceive.turnedCards?.length && tradee !== activePlayer) {
     throw new Error('Cannot trade away turned cards because you are the active player');
   }
 

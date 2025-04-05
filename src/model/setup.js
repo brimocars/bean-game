@@ -31,10 +31,11 @@ const createGame = (player) => {
   }
 
   const gameId = uuidv4();
+  // eslint-disable-next-line no-unused-vars
   const gameCode = `${crypto.randomInt(100000, 999999)}`;
   gameObjects.set(gameId, {
     gameId,
-    gameCode,
+    gameCode: 1,
     players: [player],
     updateId: uuidv4(),
   });

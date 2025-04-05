@@ -289,6 +289,7 @@ const denyTrade = (gameId, tradeId) => {
     throw new Error('Trade not found');
   }
   gameObject.activeTrades = gameObject.activeTrades.filter((t) => t.tradeId !== tradeId);
+  gameObject.updateId = uuidv4();
   return gameObject;
 };
 

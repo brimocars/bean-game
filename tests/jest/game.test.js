@@ -3,8 +3,33 @@ const gameObjects = require('../../src/db/gameObjects.js');
 
 const defaultGameId = 'eed66300-da60-4a1a-bbf8-5db7310c9cde';
 jest.mock('../../src/db/gameObjects.js', () => {
-  const go = new Map();
-  go.set(defaultGameId, {
+  class FakeGameObjects {
+    constructor(go) {
+      this.go = go;
+    }
+
+    async get(gameId) {
+      return this.go.gameId === gameId ? this.go : undefined;
+    }
+
+    async findByGameCode(gameCode) {
+      return this.go.gameCode === gameCode ? this.go : undefined;
+    }
+
+    async insert(gameObject) {
+      this.go = gameObject;
+    }
+
+    async delete(gameId) {
+      if (this.go.gameId === gameId) {
+        this.go = undefined;
+      }
+    }
+  }
+
+  const fakeGameObjects = new FakeGameObjects();
+
+  const go = {
     gameId: 'eed66300-da60-4a1a-bbf8-5db7310c9cde',
     players: [
       {
@@ -325,89 +350,95 @@ jest.mock('../../src/db/gameObjects.js', () => {
     isOver: false,
     activePlayerIndex: 0,
     phase: 'plant',
-  });
-  return go;
+  };
+  fakeGameObjects.go = go;
+  return fakeGameObjects;
 });
 
-const gameObject = gameObjects.get(defaultGameId);
-const getPlayer = (name) => gameObject.players.find((p) => p.name === name);
+let gameObject;
+beforeEach(async () => {
+  gameObject = await gameObjects.get(defaultGameId);
+});
+const getPlayer = async (name) => gameObject.players.find((p) => p.name === name);
 
 describe('plant from hand', () => {
   it('should fail to turn before a card has been planted', () => {
-    expect(() => play.turn(defaultGameId)).toThrow();
+    expect(async () => play.turn(defaultGameId)).rejects.toThrow();
   });
-  it('should plant the first card', () => {
+  it('should plant the first card', async () => {
     expect(gameObject.players[0].hand.length).toBe(5);
-    play.plantFromHand(defaultGameId, 0);
+    await play.plantFromHand(defaultGameId, 0);
     expect(gameObject.players[0].hand.length).toBe(4);
     expect(gameObject.players[0].fields[0].amount).toBe(1);
     expect(gameObject.players[0].fields[0].card.name).toBe('garden');
   });
   it('should fail to plant in an invalid field', () => {
-    expect(() => play.plantFromHand(defaultGameId, 2)).toThrow();
+    expect(async () => play.plantFromHand(defaultGameId, 2)).rejects.toThrow();
   });
-  it('should fail to plant a second card in the same field', () => {
-    expect(() => play.plantFromHand(defaultGameId, 0)).toThrow();
+  it('should fail to plant a second card in the same field', async () => {
+    await expect(async () => play.plantFromHand(defaultGameId, 0)).rejects.toThrow();
   });
-  it('should plant the second card in the second field', () => {
-    play.plantFromHand(defaultGameId, 1);
+  it('should plant the second card in the second field', async () => {
+    await play.plantFromHand(defaultGameId, 1);
     expect(gameObject.players[0].hand.length).toBe(3);
     expect(gameObject.players[0].fields[1].amount).toBe(1);
     expect(gameObject.players[0].fields[1].card.name).toBe('black');
   });
   it('should fail to plant a third card', () => {
-    expect(() => play.plantFromHand(defaultGameId, 1)).toThrow();
+    expect(async () => play.plantFromHand(defaultGameId, 1)).rejects.toThrow();
   });
   it('should fail to plant in a game that doesn\'t exist', () => {
-    expect(() => play.plantFromHand('fake', 1)).toThrow();
+    expect(async () => play.plantFromHand('fake', 1)).rejects.toThrow();
   });
 });
 
 describe('turn', () => {
   it('should fail to turn in a game that doesn\'t exist', () => {
-    expect(() => play.turn('fake')).toThrow();
+    expect(async () => play.turn('fake')).rejects.toThrow();
   });
-  it('should turn over 2 cards', () => {
+  it('should turn over 2 cards', async () => {
     expect(gameObject.draw.length).toBe(4);
     expect(gameObject.turnedCards?.length).toBe(0);
-    play.turn(defaultGameId);
+    await play.turn(defaultGameId);
     expect(gameObject.draw.length).toBe(2);
     expect(gameObject.turnedCards.length).toBe(2);
     expect(gameObject.phase).toBe('trade');
   });
-  it('should fail to turn over again', () => {
-    expect(() => play.turn(defaultGameId)).toThrow();
+  it('should fail to turn over again', async () => {
+    await expect(async () => play.turn(defaultGameId)).rejects.toThrow();
   });
 });
 
 describe('offer trade', () => {
   it('should fail to offer a trade in a game that doesn\'t exist', () => {
-    expect(() => play.offerTrade('fake')).toThrow();
+    expect(async () => play.offerTrade('fake')).rejects.toThrow();
   });
   it('should fail to offer a trade with an invalid player', () => {
-    expect(() => play.offerTrade(defaultGameId, 'asdf', gameObject.players[0], { hand: [0] }, ['red'])).toThrow();
+    expect(async () => play
+      .offerTrade(defaultGameId, 'asdf', gameObject.players[0], { hand: [0] }, ['red'])).rejects.toThrow();
   });
   it('should fail to offer an empty trade', () => {
-    expect(() => play.offerTrade(defaultGameId, gameObject.players[0], gameObject.players[1], {}, [])).toThrow();
+    expect(async () => play
+      .offerTrade(defaultGameId, gameObject.players[0], gameObject.players[1], {}, [])).rejects.toThrow();
   });
   it('should fail to offer a trade with cards that don\'t exist', () => {
-    expect(() => play.offerTrade(
+    expect(async () => play.offerTrade(
       defaultGameId,
       'd',
       'a',
       { hand: [13] },
       ['red'],
-    )).toThrow();
-    expect(() => play.offerTrade(
+    )).rejects.toThrow();
+    expect(async () => play.offerTrade(
       defaultGameId,
       'd',
       'a',
       { turnedCards: [10] },
       ['red'],
-    )).toThrow();
+    )).rejects.toThrow();
   });
-  it('should offer a trade', () => {
-    play.offerTrade(
+  it('should offer a trade', async () => {
+    await play.offerTrade(
       defaultGameId,
       'd',
       'a',
@@ -416,8 +447,8 @@ describe('offer trade', () => {
     );
     expect(gameObject.activeTrades.length).toBe(1);
   });
-  it('should offer another trade', () => {
-    play.offerTrade(
+  it('should offer another trade', async () => {
+    await play.offerTrade(
       defaultGameId,
       'd',
       'a',
@@ -426,8 +457,8 @@ describe('offer trade', () => {
     );
     expect(gameObject.activeTrades.length).toBe(2);
   });
-  it('should offer yet another trade', () => {
-    play.offerTrade(
+  it('should offer yet another trade', async () => {
+    await play.offerTrade(
       defaultGameId,
       'a',
       'd',
@@ -437,64 +468,66 @@ describe('offer trade', () => {
     expect(gameObject.activeTrades.length).toBe(3);
   });
   it('should fail to offer a trade from a non-active player with turned cards', () => {
-    expect(() => play.offerTrade(
+    expect(async () => play.offerTrade(
       defaultGameId,
       'a',
       'd',
       { turnedCards: [0] },
       ['black'],
-    )).toThrow();
+    )).rejects.toThrow();
   });
   it('should fail to offer between 2 non-active players', () => {
-    expect(() => play.offerTrade(
+    expect(async () => play.offerTrade(
       defaultGameId,
       'b',
       'a',
       { hand: [0] },
       ['black'],
-    )).toThrow();
+    )).rejects.toThrow();
   });
 });
 
 describe('accept trade', () => {
   it('should fail to accept a trade in a game that doesn\'t exist', () => {
-    expect(() => play.acceptTrade('fake')).toThrow();
+    expect(async () => play.acceptTrade('fake')).rejects.toThrow();
   });
   it('should fail to accept a trade that doesn\'t exist', () => {
-    expect(() => play.acceptTrade(defaultGameId, 'fake')).toThrow();
+    expect(async () => play.acceptTrade(defaultGameId, 'fake')).rejects.toThrow();
   });
   it('should fail to accept a trade with turned cards when not the active player', () => {
-    expect(() => play.acceptTrade(defaultGameId, gameObject.activeTrades[2].tradeId, { turnedCards: [0] })).toThrow();
+    expect(async () => play
+      .acceptTrade(defaultGameId, gameObject.activeTrades[2].tradeId, { turnedCards: [0] })).rejects.toThrow();
   });
   it('should fail to accept a trade with cards that don\'t match the offer', () => {
-    expect(() => play.acceptTrade(defaultGameId, gameObject.activeTrades[0].tradeId, { hand: [1] })).toThrow();
+    expect(async () => play
+      .acceptTrade(defaultGameId, gameObject.activeTrades[0].tradeId, { hand: [1] })).rejects.toThrow();
   });
-  it('should accept a trade', () => {
+  it('should accept a trade', async () => {
     const turnedOne = gameObject.turnedCards[0];
-    play.acceptTrade(defaultGameId, gameObject.activeTrades[0].tradeId, { hand: [0] });
+    await play.acceptTrade(defaultGameId, gameObject.activeTrades[0].tradeId, { hand: [0] });
     expect(gameObject.activeTrades.length).toBe(0); // accepting a trade cancels other trades (for now)
-    const d = getPlayer('d');
-    const a = getPlayer('a');
+    const d = await getPlayer('d');
+    const a = await getPlayer('a');
     expect(a.hand.length).toBe(4);
     expect(d.cardsToPlantNow.length).toBe(1);
     expect(d.cardsToPlantNow[0].name).toBe('red');
     expect(a.cardsToPlantNow.length).toBe(1);
     expect(a.cardsToPlantNow[0].name).toBe(turnedOne.name);
   });
-  it('should accept a trade (after re-offering it)', () => {
-    play.offerTrade(
+  it('should accept a trade (after re-offering it)', async () => {
+    await play.offerTrade(
       defaultGameId,
       'a',
       'd',
       { hand: [2] },
       ['black'],
     );
-    const d = getPlayer('d');
-    const a = getPlayer('a');
+    const d = await getPlayer('d');
+    const a = await getPlayer('a');
     expect(d.cardsToPlantNow.length).toBe(1);
     console.log(gameObject.activeTrades);
     console.log(gameObject.activeTrades[0].cardsToGive);
-    play.acceptTrade(defaultGameId, gameObject.activeTrades[0].tradeId, { hand: [1] });
+    await play.acceptTrade(defaultGameId, gameObject.activeTrades[0].tradeId, { hand: [1] });
     expect(a.hand.length).toBe(3);
     expect(d.cardsToPlantNow.length).toBe(2);
     expect(d.cardsToPlantNow[1].name).toBe('garden');
@@ -505,13 +538,13 @@ describe('accept trade', () => {
 
 describe('deny trade', () => {
   it('should fail to deny a trade in a game that doesn\'t exist', () => {
-    expect(() => play.denyTrade('fake')).toThrow();
+    expect(async () => play.denyTrade('fake')).rejects.toThrow();
   });
   it('should fail to deny a trade that doesn\'t exist', () => {
-    expect(() => play.denyTrade(defaultGameId, 'fake')).toThrow();
+    expect(async () => play.denyTrade(defaultGameId, 'fake')).rejects.toThrow();
   });
-  it('should deny a trade', () => {
-    play.offerTrade(
+  it('should deny a trade', async () => {
+    await play.offerTrade(
       defaultGameId,
       'a',
       'd',
@@ -519,17 +552,17 @@ describe('deny trade', () => {
       ['black'],
     );
     expect(gameObject.activeTrades.length).toBe(1);
-    play.denyTrade(defaultGameId, gameObject.activeTrades[0].tradeId);
+    await play.denyTrade(defaultGameId, gameObject.activeTrades[0].tradeId);
     expect(gameObject.activeTrades.length).toBe(0);
   });
 });
 
 describe('end trading phase', () => {
   it('should fail to end trading phase in a game that doesn\'t exist', () => {
-    expect(() => play.endTradingPhase('fake')).toThrow();
+    expect(async () => play.endTradingPhase('fake')).rejects.toThrow();
   });
-  it('should end trading phase', () => {
-    play.offerTrade(
+  it('should end trading phase', async () => {
+    await play.offerTrade(
       defaultGameId,
       'a',
       'd',
@@ -537,12 +570,13 @@ describe('end trading phase', () => {
       ['black'],
     );
     const remainingTurned = gameObject.turnedCards[0];
-    play.endTradingPhase(defaultGameId);
+    await play.endTradingPhase(defaultGameId);
     expect(gameObject.phase).toBe('end');
     expect(gameObject.activeTrades.length).toBe(0);
-    expect(getPlayer('d').cardsToPlantNow.length).toBe(3);
+    const d = await getPlayer('d');
+    expect(d.cardsToPlantNow.length).toBe(3);
     expect(gameObject.turnedCards.length).toBe(0);
-    expect(getPlayer('d').cardsToPlantNow[2].name).toBe(remainingTurned.name);
+    expect(d.cardsToPlantNow[2].name).toBe(remainingTurned.name);
   });
 });
 

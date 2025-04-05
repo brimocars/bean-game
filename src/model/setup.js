@@ -21,7 +21,7 @@ const coffee = new Card([4, 7, 10, 12], 24, 'coffee');
 const garden = new Card([0, 2, 3, 3], 6, 'garden');
 const cocoa = new Card([2, 2, 3, 4], 4, 'cocoa');
 
-const createGame = (player) => {
+const createGame = async (player) => {
   if (!player) {
     throw new Error('No player');
   }
@@ -31,20 +31,21 @@ const createGame = (player) => {
   }
 
   const gameId = uuidv4();
+  // TODO: uncomment
   // eslint-disable-next-line no-unused-vars
   const gameCode = `${crypto.randomInt(100000, 999999)}`;
-  gameObjects.set(gameId, {
+
+  await gameObjects.insert({
     gameId,
-    gameCode: 1,
+    gameCode: '1', // `${gameCode}`,
     players: [player],
     updateId: uuidv4(),
   });
-
   return gameObjects.get(gameId);
 };
 
-const joinGame = (player, gameCode) => {
-  const gameObject = Array.from(gameObjects.values()).find((game) => game.gameCode === gameCode);
+const joinGame = async (player, gameCode) => {
+  const gameObject = await gameObjects.findByGameCode(gameCode);
   if (!gameObject) {
     throw new Error('Game not found');
   }
@@ -67,11 +68,12 @@ const joinGame = (player, gameCode) => {
 
   gameObject.players.push(player);
   gameObject.updateId = uuidv4();
+  await gameObjects.insert(gameObject);
   return gameObject;
 };
 
-const startGame = (gameId) => {
-  const gameObject = gameObjects.get(gameId);
+const startGame = async (gameId) => {
+  const gameObject = await gameObjects.get(gameId);
   if (!gameObject) {
     throw new Error('Game not found');
   }
@@ -164,20 +166,21 @@ const startGame = (gameId) => {
   gameObject.activePlayerIndex = 0;
   gameObject.phase = Phases.PLANT;
   gameObject.updateId = uuidv4();
+  await gameObjects.insert(gameObject);
   return gameObject;
 };
 
-const deleteGame = (gameId) => {
-  const gameObject = gameObjects.get(gameId);
+const deleteGame = async (gameId) => {
+  const gameObject = await gameObjects.get(gameId);
   if (!gameObject) {
     throw new Error('Game not found');
   }
-  gameObjects.delete(gameId);
+  await gameObjects.delete(gameId);
   return gameId;
 };
 
-const leaveGame = (gameId, player) => {
-  const gameObject = gameObjects.get(gameId);
+const leaveGame = async (gameId, player) => {
+  const gameObject = await gameObjects.get(gameId);
   if (!gameObject) {
     throw new Error('Game not found');
   }
@@ -190,10 +193,11 @@ const leaveGame = (gameId, player) => {
   gameObject.players = gameObject.players.filter((p) => p.name !== player.name);
   if (gameObject.players.length === 0) {
     // delete game if no players are left
-    gameObjects.delete(gameId);
+    await gameObjects.delete(gameId);
     return {};
   }
   gameObject.updateId = uuidv4();
+  await gameObjects.insert(gameObject);
   return gameObject;
 };
 

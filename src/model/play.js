@@ -3,8 +3,8 @@ const { v4: uuidv4 } = require('uuid');
 const gameObjects = require('../db/gameObjects.js');
 const { Phases } = require('./utils/enums.js');
 
-const shuffleDrawPileOrEndGame = (gameId) => {
-  const gameObject = gameObjects.get(gameId);
+const shuffleDrawPileOrEndGame = async (gameId) => {
+  const gameObject = await gameObjects.get(gameId);
   if (gameObject.timesShuffled < 2) {
     shuffle(gameObject.discard);
     [gameObject.draw, gameObject.discard] = [gameObject.discard, gameObject.draw];
@@ -15,8 +15,8 @@ const shuffleDrawPileOrEndGame = (gameId) => {
   return gameObject.isOver;
 };
 
-const endGame = (gameId) => {
-  const gameObject = gameObjects.get(gameId);
+const endGame = async (gameId) => {
+  const gameObject = await gameObjects.get(gameId);
   gameObject.players.forEach((player) => {
     player.fields.forEach((field) => {
       harvestField(gameId, player, field);
@@ -33,8 +33,8 @@ const endGame = (gameId) => {
   return gameResults;
 };
 
-const harvestField = (gameId, player, field) => {
-  const gameObject = gameObjects.get(gameId);
+const harvestField = async (gameId, player, field) => {
+  const gameObject = await gameObjects.get(gameId);
   let moneyToGet = 0;
   const amountInField = field.amount;
   const nameInField = field.card.name;
@@ -53,8 +53,8 @@ const harvestField = (gameId, player, field) => {
   return nameInField;
 };
 
-const plantFromHand = (gameId, fieldIndex) => {
-  const gameObject = gameObjects.get(gameId);
+const plantFromHand = async (gameId, fieldIndex) => {
+  const gameObject = await gameObjects.get(gameId);
   if (!gameObject) {
     throw new Error('Game not found');
   }
@@ -80,13 +80,14 @@ const plantFromHand = (gameId, fieldIndex) => {
     fieldToPlantIn.card = cardToPlant;
     activePlayer.plantedThisTurn = activePlayer.plantedThisTurn ? activePlayer.plantedThisTurn + 1 : 1;
     gameObject.updateId = uuidv4();
+    await gameObjects.insert(gameObject);
     return { gameObject, planted: `${fieldToPlantIn.amount} ${cardToPlant.name}` };
   }
   throw new Error('Unable to plant in occupied field');
 };
 
-const turn = (gameId) => {
-  const gameObject = gameObjects.get(gameId);
+const turn = async (gameId) => {
+  const gameObject = await gameObjects.get(gameId);
   if (!gameObject) {
     throw new Error('Game not found');
   }
@@ -122,6 +123,7 @@ const turn = (gameId) => {
 
   gameObject.turnedCards = turnedCards;
   gameObject.updateId = uuidv4();
+  await gameObjects.insert(gameObject);
   return { gameObject, turnedCards: turnedCards.reduce((str, card) => `${str}${card.name}, `, '') };
 };
 
@@ -129,8 +131,8 @@ const turn = (gameId) => {
 
 // };
 
-const offerTrade = (gameId, traderName, tradeeName, cardsToGive, cardsToReceive) => {
-  const gameObject = gameObjects.get(gameId);
+const offerTrade = async (gameId, traderName, tradeeName, cardsToGive, cardsToReceive) => {
+  const gameObject = await gameObjects.get(gameId);
   if (!gameObject) {
     throw new Error('Game not found');
   }
@@ -191,11 +193,12 @@ const offerTrade = (gameId, traderName, tradeeName, cardsToGive, cardsToReceive)
   };
   gameObject.activeTrades.push(trade);
   gameObject.updateId = uuidv4();
+  await gameObjects.insert(gameObject);
   return { gameObject, newTrade: trade.tradeId };
 };
 
-const acceptTrade = (gameId, tradeId, chosenCardsToReceive) => {
-  const gameObject = gameObjects.get(gameId);
+const acceptTrade = async (gameId, tradeId, chosenCardsToReceive) => {
+  const gameObject = await gameObjects.get(gameId);
 
   if (!gameObject) {
     throw new Error('Game not found');
@@ -273,11 +276,12 @@ const acceptTrade = (gameId, tradeId, chosenCardsToReceive) => {
   // TODO: make this smart
   gameObject.activeTrades = [];
   gameObject.updateId = uuidv4();
+  await gameObjects.insert(gameObject);
   return gameObject;
 };
 
-const denyTrade = (gameId, tradeId) => {
-  const gameObject = gameObjects.get(gameId);
+const denyTrade = async (gameId, tradeId) => {
+  const gameObject = await gameObjects.get(gameId);
   if (!gameObject) {
     throw new Error('Game not found');
   }
@@ -290,11 +294,12 @@ const denyTrade = (gameId, tradeId) => {
   }
   gameObject.activeTrades = gameObject.activeTrades.filter((t) => t.tradeId !== tradeId);
   gameObject.updateId = uuidv4();
+  await gameObjects.insert(gameObject);
   return gameObject;
 };
 
-const endTradingPhase = (gameId) => {
-  const gameObject = gameObjects.get(gameId);
+const endTradingPhase = async (gameId) => {
+  const gameObject = await gameObjects.get(gameId);
   if (!gameObject) {
     throw new Error('Game not found');
   }
@@ -311,11 +316,12 @@ const endTradingPhase = (gameId) => {
   });
   gameObject.turnedCards = [];
   gameObject.updateId = uuidv4();
+  await gameObjects.insert(gameObject);
   return gameObject;
 };
 
-const harvest = (gameId, playerName, fieldIndex) => {
-  const gameObject = gameObjects.get(gameId);
+const harvest = async (gameId, playerName, fieldIndex) => {
+  const gameObject = await gameObjects.get(gameId);
   if (!gameObject) {
     throw new Error('Game not found');
   }
@@ -338,11 +344,12 @@ const harvest = (gameId, playerName, fieldIndex) => {
 
   const harvestedCardName = harvestField(gameId, player, field);
   gameObject.updateId = uuidv4();
+  await gameObjects.insert(gameObject);
   return { gameObject, money: player.money, card: harvestedCardName };
 };
 
-const plantFromPlantNow = (gameId, playerName, cardName, fieldIndex) => {
-  const gameObject = gameObjects.get(gameId);
+const plantFromPlantNow = async (gameId, playerName, cardName, fieldIndex) => {
+  const gameObject = await gameObjects.get(gameId);
   if (!gameObject) {
     throw new Error('Game not found');
   }
@@ -417,6 +424,7 @@ const plantFromPlantNow = (gameId, playerName, cardName, fieldIndex) => {
     gameObject.activePlayerIndex = (gameObject.activePlayerIndex + 1) % gameObject.players.length;
   }
   gameObject.updateId = uuidv4();
+  await gameObjects.insert(gameObject);
   return { gameObject, planted: `${field.amount} ${cardToPlant.name}` };
 };
 

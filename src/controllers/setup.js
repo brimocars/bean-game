@@ -1,9 +1,9 @@
 const model = require('../model/setup.js');
 
-const createGame = (req, res) => {
+const createGame = async (req, res) => {
   try {
     const { player } = req.body;
-    const gameObject = model.createGame(player);
+    const gameObject = await model.createGame(player);
     res.send({ message: 'Game created!', gameObject });
   } catch (error) {
     console.log(`create game: ${error.stack}`);
@@ -11,11 +11,11 @@ const createGame = (req, res) => {
   }
 };
 
-const joinGame = (req, res) => {
+const joinGame = async (req, res) => {
   try {
     const { player } = req.body;
     const { gameCode } = req.query;
-    const gameObject = model.joinGame(player, gameCode);
+    const gameObject = await model.joinGame(player, gameCode);
     res.send({ message: `Player ${player.name} joined game`, gameObject });
   } catch (error) {
     console.log(`join game: ${error.stack}`);
@@ -23,10 +23,10 @@ const joinGame = (req, res) => {
   }
 };
 
-const startGame = (req, res) => {
+const startGame = async (req, res) => {
   try {
     const { gameId } = req.query;
-    const gameObject = model.startGame(gameId);
+    const gameObject = await model.startGame(gameId);
     res.send({ message: 'Game started!', gameObject });
   } catch (error) {
     console.log(`start game: ${error.stack}`);
@@ -34,10 +34,10 @@ const startGame = (req, res) => {
   }
 };
 
-const deleteGame = (req, res) => {
+const deleteGame = async (req, res) => {
   try {
     const { gameId } = req.query;
-    const returnedGameId = model.deleteGame(gameId);
+    const returnedGameId = await model.deleteGame(gameId);
     res.send({ message: 'Game deleted', gameId: returnedGameId });
   } catch (error) {
     console.log(`delete game: ${error.stack}`);
@@ -45,11 +45,11 @@ const deleteGame = (req, res) => {
   }
 };
 
-const leaveGame = (req, res) => {
+const leaveGame = async (req, res) => {
   try {
     const { player } = req.body;
     const { gameId } = req.query;
-    const gameObject = model.leaveGame(gameId, player);
+    const gameObject = await model.leaveGame(gameId, player);
     res.send({ message: `Player ${player.name} has left game ${gameId}`, gameObject });
   } catch (error) {
     console.log(`leave game: ${error.stack}`);

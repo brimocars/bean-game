@@ -1,10 +1,10 @@
 const gameObjects = require('../db/gameObjects.js');
 
-const getGame = (gameId) => {
+const getGame = async (gameId) => {
   if (!gameId) {
-    return gameObjects.values();
+    return gameObjects.getAll();
   }
-  const gameObject = gameObjects.get(gameId);
+  const gameObject = await gameObjects.get(gameId);
   if (gameObject) {
     return gameObject;
   }

@@ -1,10 +1,10 @@
 const model = require('../model/play.js');
 
-const plantFromHand = (req, res) => {
+const plantFromHand = async (req, res) => {
   try {
     const { fieldIndex } = req.body;
     const { gameId } = req.query;
-    const { gameObject, planted } = model.plantFromHand(gameId, fieldIndex);
+    const { gameObject, planted } = await model.plantFromHand(gameId, fieldIndex);
     res.send({ message: `Field now has ${planted}`, gameObject });
   } catch (error) {
     console.log(`plant from hand: ${error.stack}`);
@@ -12,10 +12,10 @@ const plantFromHand = (req, res) => {
   }
 };
 
-const turn = (req, res) => {
+const turn = async (req, res) => {
   try {
     const { gameId } = req.query;
-    const { gameObject, turnedCards } = model.turn(gameId);
+    const { gameObject, turnedCards } = await model.turn(gameId);
     res.send({ message: `Turned: ${turnedCards}`, gameObject });
   } catch (error) {
     console.log(`turn: ${error.stack}`);
@@ -23,13 +23,13 @@ const turn = (req, res) => {
   }
 };
 
-const offerTrade = (req, res) => {
+const offerTrade = async (req, res) => {
   try {
     const { gameId } = req.query;
     const {
       trader, tradee, cardsToGive, cardsToReceive,
     } = req.body;
-    const { gameObject, newTrade } = model.offerTrade(gameId, trader, tradee, cardsToGive, cardsToReceive);
+    const { gameObject, newTrade } = await model.offerTrade(gameId, trader, tradee, cardsToGive, cardsToReceive);
     res.send({ message: `Trade offered: ${newTrade}`, gameObject });
   } catch (error) {
     console.log(`offer trade: ${error.stack}`);
@@ -37,11 +37,11 @@ const offerTrade = (req, res) => {
   }
 };
 
-const acceptTrade = (req, res) => {
+const acceptTrade = async (req, res) => {
   try {
     const { gameId } = req.query;
     const { tradeId, chosenCardsToReceive } = req.body;
-    const gameObject = model.acceptTrade(gameId, tradeId, chosenCardsToReceive);
+    const gameObject = await model.acceptTrade(gameId, tradeId, chosenCardsToReceive);
     res.send({ message: 'Trade accepted', gameObject });
   } catch (error) {
     console.log(`trade accepted: ${error.stack}`);
@@ -49,11 +49,11 @@ const acceptTrade = (req, res) => {
   }
 };
 
-const denyTrade = (req, res) => {
+const denyTrade = async (req, res) => {
   try {
     const { gameId } = req.query;
     const { tradeId } = req.body;
-    const gameObject = model.denyTrade(gameId, tradeId);
+    const gameObject = await model.denyTrade(gameId, tradeId);
     res.send({ message: 'Trade denied and deleted', gameObject });
   } catch (error) {
     console.log(`trade denied: ${error.stack}`);
@@ -61,10 +61,10 @@ const denyTrade = (req, res) => {
   }
 };
 
-const endTradingPhase = (req, res) => {
+const endTradingPhase = async (req, res) => {
   try {
     const { gameId } = req.query;
-    const gameObject = model.endTradingPhase(gameId);
+    const gameObject = await model.endTradingPhase(gameId);
     res.send({ message: 'Trading phase ended', gameObject });
   } catch (error) {
     console.log(`end trading phase: ${error.stack}`);
@@ -72,11 +72,11 @@ const endTradingPhase = (req, res) => {
   }
 };
 
-const harvest = (req, res) => {
+const harvest = async (req, res) => {
   try {
     const { gameId } = req.query;
     const { player, fieldIndex } = req.body;
-    const { gameObject, money, card } = model.harvest(gameId, player, fieldIndex);
+    const { gameObject, money, card } = await model.harvest(gameId, player, fieldIndex);
     res.send({ message: `harvested ${card} in field ${fieldIndex} for ${money} money`, gameObject });
   } catch (error) {
     console.log(`harvest: ${error.stack}`);
@@ -84,14 +84,14 @@ const harvest = (req, res) => {
   }
 };
 
-const plantFromPlantNow = (req, res) => {
+const plantFromPlantNow = async (req, res) => {
   try {
     const { gameId } = req.query;
     const { playerName, cardName, fieldIndex } = req.body;
-    const { gameObject, planted } = model.plantFromPlantNow(gameId, playerName, cardName, fieldIndex);
+    const { gameObject, planted } = await model.plantFromPlantNow(gameId, playerName, cardName, fieldIndex);
     res.send({ message: `Field now has ${planted}`, gameObject });
   } catch (error) {
-    console.log(`plant from hand: ${error.stack}`);
+    console.log(`plaasync nt from hand: ${error.stack}`);
     res.status(400).send({ message: error.message });
   }
 };

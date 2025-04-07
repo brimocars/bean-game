@@ -12,6 +12,14 @@ class GameObjects {
       const client = new MongoClient(mongodbUri);
       await client.connect();
       this.client = client;
+
+      // games that haven't been updated in 24 hours delete themselves. This is fine to do every startup - attempting
+      // to create an index that already exists does nothing
+      const db = client.db(this.dbName);
+      db.collection(this.dbName).createIndex({ updatedAt: 1 }, { expireAfterSeconds: 60 * 60 * 24 });
+
+      // index to speed up reads
+      db.collection(this.dbName).createIndex({ gameId: 1 }, { unique: true });
     }
     return this.client;
   }
@@ -56,6 +64,7 @@ class GameObjects {
   }
 
   async insert(gameObject) {
+    gameObject.updatedAt = new Date();
     try {
       const collection = await this.getCollection();
       await collection.updateOne(

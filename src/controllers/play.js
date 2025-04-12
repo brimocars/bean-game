@@ -84,7 +84,6 @@ const harvest = async (req, res) => {
   }
 };
 
-// TODO: call it player instead of playerName
 const plantFromPlantNow = async (req, res) => {
   try {
     const { gameId } = req.query;

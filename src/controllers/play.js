@@ -75,8 +75,8 @@ const endTradingPhase = async (req, res) => {
 const harvest = async (req, res) => {
   try {
     const { gameId } = req.query;
-    const { player, fieldIndex } = req.body;
-    const { gameObject, money, card } = await model.harvest(gameId, player, fieldIndex);
+    const { playerName, fieldIndex } = req.body;
+    const { gameObject, money, card } = await model.harvest(gameId, playerName, fieldIndex);
     res.send({ message: `harvested ${card} in field ${fieldIndex} for ${money} money`, gameObject });
   } catch (error) {
     console.log(`harvest: ${error.stack}`);
@@ -84,6 +84,7 @@ const harvest = async (req, res) => {
   }
 };
 
+// TODO: call it player instead of playerName
 const plantFromPlantNow = async (req, res) => {
   try {
     const { gameId } = req.query;

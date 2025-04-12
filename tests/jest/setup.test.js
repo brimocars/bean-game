@@ -36,7 +36,7 @@ beforeEach(() => {
 
 describe('create game', () => {
   it('should create a game', async () => {
-    const { gameId } = await setup.createGame({ name: 'a' });
+    const { gameId } = await setup.createGame('a');
     const go = await gameObjects.get(gameId);
     expect(go).toBeDefined();
     expect(go.players).toHaveLength(1);
@@ -47,7 +47,7 @@ describe('create game', () => {
     expect(async () => setup.createGame()).rejects.toThrow();
   });
   it('should fail to create a game with an invalid name', () => {
-    expect(async () => setup.createGame({ name: 123 })).rejects.toThrow();
+    expect(async () => setup.createGame(123)).rejects.toThrow();
   });
 });
 
@@ -55,47 +55,47 @@ describe('join game', () => {
   let gameCode;
   let gameId;
   beforeEach(async () => {
-    const game = await setup.createGame({ name: 'a' });
+    const game = await setup.createGame('a');
     gameCode = game.gameCode;
     gameId = game.gameId;
   });
 
   it('should join a game', async () => {
-    const go = await setup.joinGame({ name: 'b' }, gameCode);
+    const go = await setup.joinGame('b', gameCode);
     expect(go.players).toHaveLength(2);
   });
 
   it('should join a game with multiple players', async () => {
     const go = await gameObjects.get(gameId);
-    await setup.joinGame({ name: 'b' }, gameCode);
-    await setup.joinGame({ name: 'c' }, gameCode);
-    await setup.joinGame({ name: 'd' }, gameCode);
-    await setup.joinGame({ name: 'e' }, gameCode);
-    await setup.joinGame({ name: 'f' }, gameCode);
+    await setup.joinGame('b', gameCode);
+    await setup.joinGame('c', gameCode);
+    await setup.joinGame('d', gameCode);
+    await setup.joinGame('e', gameCode);
+    await setup.joinGame('f', gameCode);
     expect(go.players).toHaveLength(6);
   });
 
   it('should fail to join a game with too many players', async () => {
     const go = await gameObjects.get(gameId);
-    await setup.joinGame({ name: 'b' }, gameCode);
-    await setup.joinGame({ name: 'c' }, gameCode);
-    await setup.joinGame({ name: 'd' }, gameCode);
-    await setup.joinGame({ name: 'e' }, gameCode);
-    await setup.joinGame({ name: 'f' }, gameCode);
-    await setup.joinGame({ name: 'g' }, gameCode);
-    expect(async () => setup.joinGame({ name: 'h' }, gameCode)).rejects.toThrow();
+    await setup.joinGame('b', gameCode);
+    await setup.joinGame('c', gameCode);
+    await setup.joinGame('d', gameCode);
+    await setup.joinGame('e', gameCode);
+    await setup.joinGame('f', gameCode);
+    await setup.joinGame('g', gameCode);
+    expect(async () => setup.joinGame('h', gameCode)).rejects.toThrow();
     expect(go.players).toHaveLength(7);
   });
 
   it('should fail to join with a duplicate name', async () => {
     const go = await gameObjects.get(gameId);
-    await setup.joinGame({ name: 'b' }, gameCode);
-    expect(async () => setup.joinGame({ name: 'b' }, gameCode)).rejects.toThrow();
+    await setup.joinGame('b', gameCode);
+    expect(async () => setup.joinGame('b', gameCode)).rejects.toThrow();
     expect(go.players).toHaveLength(2);
   });
 
   it('should fail to join a game that doesn\t exist', () => {
-    expect(async () => setup.joinGame({ name: 'b' }, 'fake')).rejects.toThrow();
+    expect(async () => setup.joinGame('b', 'fake')).rejects.toThrow();
   });
 });
 
@@ -103,13 +103,13 @@ describe('start game', () => {
   let gameCode;
   let gameId;
   beforeEach(async () => {
-    const game = await setup.createGame({ name: 'a' });
+    const game = await setup.createGame('a');
     gameCode = game.gameCode;
     gameId = game.gameId;
   });
   const addPlayersToGame = async () => {
-    await setup.joinGame({ name: 'b' }, gameCode);
-    await setup.joinGame({ name: 'c' }, gameCode);
+    await setup.joinGame('b', gameCode);
+    await setup.joinGame('c', gameCode);
   };
 
   it('should start a game', async () => {
@@ -139,11 +139,11 @@ describe('delete and leave game', () => {
   let gameCode;
   let gameId;
   beforeEach(async () => {
-    const game = await setup.createGame({ name: 'a' });
+    const game = await setup.createGame('a');
     gameCode = game.gameCode;
     gameId = game.gameId;
-    await setup.joinGame({ name: 'b' }, gameCode);
-    await setup.joinGame({ name: 'c' }, gameCode);
+    await setup.joinGame('b', gameCode);
+    await setup.joinGame('c', gameCode);
   });
 
   it('should delete a game', async () => {

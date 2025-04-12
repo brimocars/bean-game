@@ -21,12 +21,12 @@ const coffee = new Card([4, 7, 10, 12], 24, 'coffee');
 const garden = new Card([0, 2, 3, 3], 6, 'garden');
 const cocoa = new Card([2, 2, 3, 4], 4, 'cocoa');
 
-const createGame = async (player) => {
-  if (!player) {
+const createGame = async (playerName) => {
+  if (!playerName) {
     throw new Error('No player');
   }
 
-  if (typeof player.name !== 'string' || player.name.length === 0) {
+  if (typeof playerName !== 'string' || playerName.length === 0) {
     throw new Error('Invalid player name');
   }
 
@@ -38,13 +38,13 @@ const createGame = async (player) => {
   await gameObjects.insert({
     gameId,
     gameCode: '1', // `${gameCode}`,
-    players: [player],
+    players: [{ name: playerName }],
     updateId: uuidv4(),
   });
   return gameObjects.get(gameId);
 };
 
-const joinGame = async (player, gameCode) => {
+const joinGame = async (playerName, gameCode) => {
   const gameObject = await gameObjects.findByGameCode(gameCode);
   if (!gameObject) {
     throw new Error('Game not found');
@@ -58,15 +58,15 @@ const joinGame = async (player, gameCode) => {
     throw new Error('Max players reached');
   }
 
-  if (typeof player.name !== 'string' || player.name.length === 0) {
+  if (typeof playerName !== 'string' || playerName.length === 0) {
     throw new Error('Invalid player name');
   }
 
-  if (gameObject.players.find((p) => p.name === player.name)) {
-    throw new Error(`Player '${player.name}' already in game`);
+  if (gameObject.players.find((p) => p.name === playerName)) {
+    throw new Error(`Player '${playerName}' already in game`);
   }
 
-  gameObject.players.push(player);
+  gameObject.players.push({ name: playerName });
   gameObject.updateId = uuidv4();
   await gameObjects.insert(gameObject);
   return gameObject;
@@ -179,7 +179,7 @@ const deleteGame = async (gameId) => {
   return gameId;
 };
 
-const leaveGame = async (gameId, player) => {
+const leaveGame = async (gameId, playerName) => {
   const gameObject = await gameObjects.get(gameId);
   if (!gameObject) {
     throw new Error('Game not found');
@@ -187,10 +187,10 @@ const leaveGame = async (gameId, player) => {
   if (gameObject.phase) {
     throw new Error('Game already started');
   }
-  if (!gameObject.players.find((p) => p.name === player.name)) {
-    throw new Error(`Player '${player.name}' not in game`);
+  if (!gameObject.players.find((p) => p.name === playerName)) {
+    throw new Error(`Player '${playerName}' not in game`);
   }
-  gameObject.players = gameObject.players.filter((p) => p.name !== player.name);
+  gameObject.players = gameObject.players.filter((p) => p.name !== playerName);
   if (gameObject.players.length === 0) {
     // delete game if no players are left
     await gameObjects.delete(gameId);

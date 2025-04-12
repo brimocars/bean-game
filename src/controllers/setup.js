@@ -2,8 +2,8 @@ const model = require('../model/setup.js');
 
 const createGame = async (req, res) => {
   try {
-    const { player } = req.body;
-    const gameObject = await model.createGame(player);
+    const { playerName } = req.body;
+    const gameObject = await model.createGame(playerName);
     res.send({ message: 'Game created!', gameObject });
   } catch (error) {
     console.log(`create game: ${error.stack}`);
@@ -13,10 +13,10 @@ const createGame = async (req, res) => {
 
 const joinGame = async (req, res) => {
   try {
-    const { player } = req.body;
+    const { playerName } = req.body;
     const { gameCode } = req.query;
-    const gameObject = await model.joinGame(player, gameCode);
-    res.send({ message: `Player ${player.name} joined game`, gameObject });
+    const gameObject = await model.joinGame(playerName, gameCode);
+    res.send({ message: `Player ${playerName} joined game`, gameObject });
   } catch (error) {
     console.log(`join game: ${error.stack}`);
     res.status(400).send({ message: error.message });
@@ -47,10 +47,10 @@ const deleteGame = async (req, res) => {
 
 const leaveGame = async (req, res) => {
   try {
-    const { player } = req.body;
+    const { playerName } = req.body;
     const { gameId } = req.query;
-    const gameObject = await model.leaveGame(gameId, player);
-    res.send({ message: `Player ${player.name} has left game ${gameId}`, gameObject });
+    const gameObject = await model.leaveGame(gameId, playerName);
+    res.send({ message: `Player ${playerName} has left game ${gameId}`, gameObject });
   } catch (error) {
     console.log(`leave game: ${error.stack}`);
     res.status(400).send({ message: error.message });

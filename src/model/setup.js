@@ -142,7 +142,8 @@ const startGame = async (gameId) => {
     player.cardsToPlantNow = [];
   });
 
-  shuffle(gameObject.players);
+  // TODO: uncomment
+  // shuffle(gameObject.players);
   shuffle(deck);
   gameObject.players.forEach((player, index) => {
     player.index = index;

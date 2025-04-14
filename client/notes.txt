@@ -1,0 +1,6 @@
+User accounts - do the access thing.
+Use mongoose for user accounts, but not game objects
+No handlebars
+same repo, but different node projects
+use vite
+modify the eslint rules

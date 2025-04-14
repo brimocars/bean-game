@@ -19,7 +19,7 @@ const endGame = async (gameId) => {
   const gameObject = await gameObjects.get(gameId);
   gameObject.players.forEach((player) => {
     player.fields.forEach((field) => {
-      harvestField(gameId, player, field);
+      harvestField(gameObject, player, field);
     });
   });
 
@@ -33,8 +33,7 @@ const endGame = async (gameId) => {
   return gameResults;
 };
 
-const harvestField = async (gameId, player, field) => {
-  const gameObject = await gameObjects.get(gameId);
+const harvestField = (gameObject, player, field) => {
   let moneyToGet = 0;
   const amountInField = field.amount;
   const nameInField = field.card.name;
@@ -342,7 +341,7 @@ const harvest = async (gameId, playerName, fieldIndex) => {
     throw new Error('Protected bean clause: cannot harvest a field of 1 if you have another field with more than 1');
   }
 
-  const harvestedCardName = harvestField(gameId, player, field);
+  const harvestedCardName = harvestField(gameObject, player, field);
   gameObject.updateId = uuidv4();
   await gameObjects.insert(gameObject);
   return { gameObject, money: player.money, card: harvestedCardName };

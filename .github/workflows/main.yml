@@ -66,6 +66,9 @@ jobs:
         EOF
         heroku whoami
 
+    - name: Unshallow the repository
+      run: git fetch --unshallow
+
     - name: Deploy to Heroku
       run: |
         heroku git:remote -a brimocars-bean-game

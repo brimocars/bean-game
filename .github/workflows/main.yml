@@ -56,13 +56,17 @@ jobs:
       env:
         HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
       run: |
-        echo "$HEROKU_API_KEY" | heroku auth:token > /dev/null
-        echo "machine api.heroku.com" >> ~/.netrc
-        echo "  login $HEROKU_API_KEY" >> ~/.netrc
-        echo "machine git.heroku.com" >> ~/.netrc
-        echo "  login $HEROKU_API_KEY" >> ~/.netrc
+        cat > ~/.netrc <<EOF
+        machine api.heroku.com
+          login $HEROKU_API_KEY
+          password $HEROKU_API_KEY
+        machine git.heroku.com
+          login $HEROKU_API_KEY
+          password $HEROKU_API_KEY
+        EOF
+        heroku whoami
 
     - name: Deploy to Heroku
       run: |
         heroku git:remote -a brimocars-bean-game
-        git push heroku main  # This triggers a deploy on Heroku from GitHub
+        git push heroku HEAD:main

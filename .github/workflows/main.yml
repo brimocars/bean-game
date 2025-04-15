@@ -52,6 +52,16 @@ jobs:
         curl https://cli-assets.heroku.com/install.sh | sh 
         echo "heroku-cli installed"
         
+    - name: Log in to Heroku via API key
+      env:
+        HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+      run: |
+        echo "$HEROKU_API_KEY" | heroku auth:token > /dev/null
+        echo "machine api.heroku.com" >> ~/.netrc
+        echo "  login $HEROKU_API_KEY" >> ~/.netrc
+        echo "machine git.heroku.com" >> ~/.netrc
+        echo "  login $HEROKU_API_KEY" >> ~/.netrc
+
     - name: Deploy to Heroku
       run: |
         heroku git:remote -a brimocars-bean-game

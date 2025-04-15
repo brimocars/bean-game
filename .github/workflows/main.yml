@@ -54,5 +54,5 @@ jobs:
         
     - name: Deploy to Heroku
       run: |
-        git remote add heroku https://git.heroku.com/brimocars-bean-game.git
+        heroku git:remote -a brimocars-bean-game
         git push heroku main  # This triggers a deploy on Heroku from GitHub

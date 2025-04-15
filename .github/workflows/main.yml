@@ -44,14 +44,3 @@ jobs:
         cd client
         npm ci
         npm run build
-
-      # heroku
-      # from https://github.com/marketplace/actions/deploy-to-heroku
-    - name: Install Heroku CLI
-      run: |
-        curl https://cli-assets.heroku.com/install.sh | sh 
-    - uses: akhileshns/heroku-deploy@v3.14.15 # This is the action
-      with:
-        heroku_api_key: ${{secrets.HEROKU_API_KEY}}
-        heroku_app_name: "brimocars-bean-game" #Must be unique in Heroku
-        heroku_email: "bsm1875@rit.edu"

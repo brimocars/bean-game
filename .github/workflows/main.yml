@@ -44,3 +44,15 @@ jobs:
         cd client
         npm ci
         npm run build
+
+      # heroku
+      # from https://github.com/marketplace/actions/deploy-to-heroku
+    - name: Install Heroku CLI
+      run: |
+        curl https://cli-assets.heroku.com/install.sh | sh 
+        echo "heroku-cli installed"
+        
+    - name: Deploy to Heroku
+      run: |
+        git remote add heroku https://git.heroku.com/brimocars-bean-game.git
+        git push heroku main  # This triggers a deploy on Heroku from GitHub

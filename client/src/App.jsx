@@ -7,7 +7,7 @@ function App() {
   return (
     <>
       <div>
-
+        Dashboard goes here
       </div>
     </>
     // <>

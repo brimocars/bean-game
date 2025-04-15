@@ -69,4 +69,4 @@ jobs:
     - name: Deploy to Heroku
       run: |
         heroku git:remote -a brimocars-bean-game
-        git push heroku HEAD:main
+        git push heroku HEAD:main --force

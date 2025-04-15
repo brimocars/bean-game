@@ -3,6 +3,6 @@
   "private": true,
   "scripts": {
     "start": "npm --prefix server start",
-    "heroku-postbuild": "cd ../server && npm install"
+    "heroku-postbuild": "cd ./server && npm install"
   }
 }

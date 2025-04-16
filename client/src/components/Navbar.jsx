@@ -3,15 +3,19 @@ import { clearSessionStorage } from '../helpers/utils'
 import logoUrl from '../assets/logo.jpg'
 
 function NavBar() {
+  useEffect(() => {
+    setToken(utils.getTokenFromSessionStorage());
+  }, [showLogin])
+
   return (
     <nav id='nav-bar'>
-    <a href="/">
-      <img id="logo" src={logoUrl} alt="logo" />
-    </a>
-    <div className="navlink">
-      <button onClick={clearSessionStorage}>Log out</button>
-    </div>
-  </nav>
+      <a href="/">
+        <img id="logo" src={logoUrl} alt="logo" />
+      </a>
+      {token &&
+        <button onClick={clearSessionStorage}>Log out</button>
+      }
+    </nav >
   )
 }
 

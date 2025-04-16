@@ -2,9 +2,20 @@
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+  margin: 0px;
+  padding: 10px;
+  align-items: center;
+  max-height: 50px;
+  background-color: #b0d0ff 
+}
+
+#nav-bar > button {
+  margin: 10px 20px;
 }
 
 #logo {
-  width: 100px;
-  height: 100px;
+  width: 60px;
+  height: 60px;
+  position: absolute;
+  top: 12.5px;
 }

@@ -1,6 +1,5 @@
 export async function login(username, password) {
   try {
-
     const res = await fetch('/login', {
       method: 'POST',
       body: JSON.stringify({
@@ -16,8 +15,23 @@ export async function login(username, password) {
   }
 }
 
-export async function signup() {
-
+export async function signup(username, password, accessCode) {
+  try {
+    const res = await fetch('/signup', {
+      method: 'POST',
+      body: JSON.stringify({
+        username,
+        password,
+        accessCode
+      })
+    })
+    if (res.status !== 201) {
+      throw new Error('failed')
+    }
+  } catch (err) {
+    console.log(`login: ${err}`)
+    return { error: err.message };
+  }
 }
 
 export async function getAllGames() {

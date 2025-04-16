@@ -35,7 +35,7 @@ redisClient.connect().then(() => {
   app.use(helmet());
   app.use(express.json());
   app.use(routes);
-  app.use(favicon(`${__dirname}/../dist/img/favicon.jpg`));
+  app.use(favicon(`${__dirname}/../img/favicon.jpg`));
 
   app.use(session({
     key: 'sessionid',

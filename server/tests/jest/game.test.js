@@ -1,4 +1,4 @@
-const play = require('../../src/model/play.js');
+const play = require('../../src/lib/play.js');
 const gameObjects = require('../../src/db/gameObjects.js');
 
 const defaultGameId = 'eed66300-da60-4a1a-bbf8-5db7310c9cde';

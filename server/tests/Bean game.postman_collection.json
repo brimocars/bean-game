@@ -565,7 +565,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"fieldIndex\": 0,\r\n    \"playerName\": \"d\",\r\n    \"cardName\": \"red\"\r\n}",
+							"raw": "{\r\n    \"fieldIndex\": 0,\r\n    \"playerName\": \"c\",\r\n    \"cardName\": \"coffee\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -586,6 +586,76 @@
 									"key": "gameId",
 									"value": "{{gameId}}"
 								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "auth",
+			"item": [
+				{
+					"name": "login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const jsonData = pm.response.json()\r",
+									"pm.environment.set(\"bearerToken\", jsonData.token);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"bri\",\r\n    \"password\": \"asdf\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/login",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "signup",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"bri\",\r\n    \"password\": \"asdf\",\r\n    \"accessCode\": \"{{accessCode}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/signup",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"signup"
 							]
 						}
 					},
@@ -631,6 +701,30 @@
 				}
 			},
 			"response": []
+		},
+		{
+			"name": "get dashboard",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{bearerToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}",
+					"host": [
+						"{{baseUrl}}"
+					]
+				}
+			},
+			"response": []
 		}
 	],
 	"event": [
@@ -663,8 +757,18 @@
 		},
 		{
 			"key": "gameCode",
-			"value": "744914",
+			"value": "1",
 			"type": "default"
+		},
+		{
+			"key": "accessCode",
+			"value": "",
+			"type": "default"
+		},
+		{
+			"key": "bearerToken",
+			"value": "",
+			"type": "string"
 		}
 	]
 }

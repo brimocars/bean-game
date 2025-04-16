@@ -1,9 +1,9 @@
-const model = require('../model/getGame');
+const lib = require('../lib/getGame');
 
 const getGame = async (req, res) => {
   try {
     const { gameId } = req.query;
-    const gameObject = await model.getGame(gameId);
+    const gameObject = await lib.getGame(gameId);
     res.send({ message: 'Game found', gameObject });
   } catch (error) {
     console.log(`get game: ${error.stack}`);

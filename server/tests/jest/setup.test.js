@@ -1,4 +1,4 @@
-const setup = require('../../src/model/setup.js');
+const setup = require('../../src/lib/setup.js');
 const gameObjects = require('../../src/db/gameObjects.js');
 
 jest.mock('../../src/db/gameObjects.js', () => {

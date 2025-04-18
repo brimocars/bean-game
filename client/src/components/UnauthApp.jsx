@@ -1,14 +1,13 @@
-import './App.css'
+import './UnauthApp.css'
 import { useState, useEffect } from 'react'
 import Login from './Login.jsx'
 import Signup from './Signup.jsx'
 import * as utils from '../helpers/utils.js'
 
 
-function App () {
+function UnauthApp ({ token, setToken}) {
   const [showLogin, setShowLogin] = useState(false);
   const [showSignup, setShowSignup] = useState(false);
-  const [token, setToken] = useState('');
 
   useEffect(() => {
     setToken(utils.getTokenFromSessionStorage());
@@ -31,7 +30,7 @@ function App () {
     }
 
     return (
-      <div>
+      <div id='main-button-holder'>
         <button onClick={() => setShowLogin(true)}>Login</button>
         <button onClick={() => setShowSignup(true)}>Signup</button>
       </div>
@@ -39,4 +38,4 @@ function App () {
   }
 };
 
-export default App;
+export default UnauthApp;

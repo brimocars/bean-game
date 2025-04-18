@@ -2,6 +2,9 @@ export async function login(username, password) {
   try {
     const res = await fetch('/login', {
       method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
       body: JSON.stringify({
         username,
         password,
@@ -19,6 +22,9 @@ export async function signup(username, password, accessCode) {
   try {
     const res = await fetch('/signup', {
       method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
       body: JSON.stringify({
         username,
         password,

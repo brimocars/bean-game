@@ -22,11 +22,11 @@ function Signup({ setShowSignup }) {
         </div>
         <div className='row'>
           <label htmlFor="password">Password:</label>
-          <input type='text' name='password' value={password} onInput={(e) => setPassword(e.target.value)} placeholder='password' />
+          <input type='password' name='password' value={password} onInput={(e) => setPassword(e.target.value)} placeholder='password' />
         </div>
         <div className='row'>
           <label htmlFor="accessCode">Access Code:</label>
-          <input type='text' name='accessCode' value={accessCode} onInput={(e) => setAccessCode(e.target.value)} placeholder='access code' />
+          <input type='password' name='accessCode' value={accessCode} onInput={(e) => setAccessCode(e.target.value)} placeholder='access code' />
         </div>
         <button id='signup' onClick={() => handleSignup(username, password, accessCode, setShowSignup)}>Signup</button>
       </div>

@@ -27,7 +27,7 @@ function Login({ setShowLogin }) {
         </div>
         <div className='row'>
           <label htmlFor="password">Password:</label>
-          <input type='text' name='password' value={password} onInput={(e) => setPassword(e.target.value)} placeholder='password' />
+          <input type='password' name='password' value={password} onInput={(e) => setPassword(e.target.value)} placeholder='password' />
         </div>
         <button id='login' onClick={() => handleLogin(username, password, setShowLogin)}>Login</button>
       </div>

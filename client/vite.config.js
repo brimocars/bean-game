@@ -16,6 +16,7 @@ export default defineConfig({
         index: resolve(__dirname, 'index.html'),
         loginPage: resolve(__dirname, 'src/login/index.html')
       }
-    }
+    },
+    sourcemap: true,
   }
 })

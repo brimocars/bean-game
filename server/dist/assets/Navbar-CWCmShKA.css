@@ -1,0 +1,1 @@
+#nav-bar{display:flex;flex-direction:row;justify-content:space-between;margin:0;padding:10px;align-items:center;height:50px;background-color:#b0d0ff}#nav-bar>button{margin:10px 20px}#logo{width:60px;height:60px;position:absolute;top:12.5px}#logout{background-color:#703b0a;color:#eee;font-size:20px;padding:5px 20px;border-radius:5px;border-width:0px;cursor:pointer}

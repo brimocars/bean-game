@@ -41,9 +41,13 @@ export async function signup(username, password, accessCode) {
 
 export async function logout() {
   try {
-    await fetch('/logout', {
+    const res = await fetch('/logout', {
       method: 'GET',
     })
+    const data = await res.json();
+    if (data.redirect) {
+      window.location.href = data.redirect;
+    }
   } catch (err) {
     console.log(`logout: ${err}`)
     return { error: err.message };

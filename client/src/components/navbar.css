@@ -19,3 +19,13 @@
   position: absolute;
   top: 12.5px;
 }
+
+#logout {
+  background-color: #703b0a;
+  color: #eeeeee;
+  font-size: 20px;
+  padding: 5px 20px;
+  border-radius: 5px;
+  border-width: 0px;
+  cursor: pointer;
+}

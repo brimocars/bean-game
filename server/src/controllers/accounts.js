@@ -1,8 +1,9 @@
 const lib = require('../lib/accounts');
 
 const logout = (req, res) => {
+  console.log('logout');
   req.session.destroy();
-  res.redirect('/');
+  return res.json({ redirect: '/' });
 };
 
 const signup = async (req, res) => {

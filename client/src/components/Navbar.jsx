@@ -11,7 +11,7 @@ function NavBar() {
         <img id="logo" src={logoUrl} alt="logo" />
       </a>
       {getCurrentUrl() !== 'login-page' &&
-        <button onClick={api.logout}>Log out</button>
+        <button id='logout' onClick={api.logout}>Log out</button>
       }
     </nav >
   )

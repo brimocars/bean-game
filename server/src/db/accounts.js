@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const bcrypt = require('bcrypt');
 
 let AccountModel = {};
 
@@ -19,6 +20,31 @@ const AccountSchema = new mongoose.Schema({
     default: Date.now,
   },
 });
+
+const saltRounds = 10;
+AccountSchema.statics.generateHash = (password) => bcrypt.hash(password, saltRounds);
+
+AccountSchema.statics.toAPI = (doc) => ({
+  username: doc.username,
+  _id: doc._id,
+});
+
+AccountSchema.statics.authenticate = async (username, password, callback) => {
+  try {
+    const doc = await AccountModel.findOne({ username }).exec();
+    if (!doc) {
+      return callback();
+    }
+
+    const match = await bcrypt.compare(password, doc.password);
+    if (match) {
+      return callback(null, doc);
+    }
+    return callback();
+  } catch (err) {
+    return callback(err);
+  }
+};
 
 AccountModel = mongoose.model('Account', AccountSchema);
 module.exports = AccountModel;

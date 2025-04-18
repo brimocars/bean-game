@@ -1,11 +1,5 @@
-export function getTokenFromSessionStorage() {
-  return sessionStorage.getItem('token');
-}
-
-export function saveTokenInSessionStorage(token) {
-  sessionStorage.setItem('token', token);
-}
-
-export function clearSessionStorage() {
-  sessionStorage.clear();
+export function getCurrentUrl() {
+  const url = location.href.slice(0, -1).split('/').pop();
+  console.log(url);
+  return url;
 }

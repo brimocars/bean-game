@@ -1,4 +1,3 @@
-const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const AccountModel = require('../db/accounts');
 
@@ -9,24 +8,44 @@ const signup = async (username, password, accessCode) => {
   if (accessCode !== process.env.ACCESS_CODE) {
     throw new Error('Invalid access code');
   }
-  const hashedPassword = await bcrypt.hash(password, 10);
-  await AccountModel.create({ username, password: hashedPassword });
+
+  try {
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const newAccount = { username, password: hashedPassword };
+    await AccountModel.create(newAccount);
+    return AccountModel.toAPI(newAccount);
+  } catch (err) {
+    console.log(err);
+    if (err.code === 11000) {
+      return {
+        status: 400,
+        error: 'Username already in use!',
+      };
+    }
+    return {
+      status: 500,
+      error: 'An error occurred!',
+    };
+  }
 };
 
 const login = async (username, password) => {
   if (!username || !password) {
-    throw new Error('Username, password, and accessCode are required');
+    return {
+      status: 400,
+      error: 'Username and password are required',
+    };
   }
-  const hashedPassword = await AccountModel.findOne({ username }, 'password').lean().exec();
-  const match = await bcrypt.compare(password, hashedPassword.password);
+  const account = await AccountModel.findOne({ username }).lean().exec();
+  const match = await bcrypt.compare(password, account.password);
   if (!match) {
-    throw new Error('Incorrect login information');
+    return {
+      status: 401,
+      error: 'Incorrect login information',
+    };
   }
 
-  const token = jwt.sign({ username }, process.env.JWT_SECRET, {
-    expiresIn: '1h',
-  });
-  return token;
+  return AccountModel.toAPI(account);
 };
 
 module.exports = {

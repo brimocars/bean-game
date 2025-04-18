@@ -1,22 +1,17 @@
-import { useEffect } from 'react'
-
 import './navbar.css'
-import * as utils from '../helpers/utils'
+import * as api from '../helpers/api'
+import { getCurrentUrl } from '../helpers/utils';
 import logoUrl from '../assets/logo.jpg'
 
-function NavBar({ token, setToken}) {
-
-  useEffect(() => {
-    setToken(utils.getTokenFromSessionStorage());
-  }, [])
-
+function NavBar() {
+  console.log(`href: ${location.href}`);
   return (
     <nav id='nav-bar'>
       <a href="/">
         <img id="logo" src={logoUrl} alt="logo" />
       </a>
-      {token &&
-        <button onClick={utils.clearSessionStorage}>Log out</button>
+      {getCurrentUrl() !== 'login-page' &&
+        <button onClick={api.logout}>Log out</button>
       }
     </nav >
   )

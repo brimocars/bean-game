@@ -34,9 +34,6 @@ redisClient.connect().then(() => {
   const app = express();
   app.use(helmet());
   app.use(express.json());
-  app.use(routes);
-  app.use(favicon(`${__dirname}/../img/favicon.jpg`));
-
   app.use(session({
     key: 'sessionid',
     store: new RedisStore({ client: redisClient }),
@@ -44,6 +41,9 @@ redisClient.connect().then(() => {
     resave: false,
     saveUninitialized: false,
   }));
+
+  app.use(routes);
+  app.use(favicon(`${__dirname}/../img/favicon.jpg`));
 
   app.listen(port, () => {
     console.log(`Server running on port ${port}`);

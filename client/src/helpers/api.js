@@ -11,7 +11,9 @@ export async function login(username, password) {
       })
     })
     const data = await res.json();
-    return data.token;
+    if (data.redirect) {
+      window.location.href = data.redirect;
+    }
   } catch (err) {
     console.log(`login: ${err}`)
     return { error: err.message };
@@ -20,7 +22,7 @@ export async function login(username, password) {
 
 export async function signup(username, password, accessCode) {
   try {
-    const res = await fetch('/signup', {
+    await fetch('/signup', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -31,11 +33,19 @@ export async function signup(username, password, accessCode) {
         accessCode
       })
     })
-    if (res.status !== 201) {
-      throw new Error('failed')
-    }
   } catch (err) {
-    console.log(`login: ${err}`)
+    console.log(`signup: ${err}`)
+    return { error: err.message };
+  }
+}
+
+export async function logout() {
+  try {
+    await fetch('/logout', {
+      method: 'GET',
+    })
+  } catch (err) {
+    console.log(`logout: ${err}`)
     return { error: err.message };
   }
 }

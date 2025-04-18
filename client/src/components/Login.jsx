@@ -1,17 +1,11 @@
 import { useState } from 'react'
 
 import * as api from '../helpers/api'
-import * as utils from '../helpers/utils'
 import './Login.css'
 
 async function handleLogin(username, password, setShowLogin) {
-  const token = await api.login(username, password)
-  if (token.error) {
-    //TODO: do something with this
-  } else {
-    setShowLogin(false)
-    utils.saveTokenInSessionStorage(token);
-  }
+  await api.login(username, password)
+  setShowLogin(false)
 }
 
 function Login({ setShowLogin }) {

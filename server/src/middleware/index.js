@@ -1,22 +1,18 @@
-const jwt = require('jsonwebtoken');
-
-const auth = (req, res, next) => {
-  console.log(req.url);
-  const token = req.headers?.authorization?.split(' ')[1];
-  if (!token) {
-    console.log('no token');
+const requiresLogin = (req, res, next) => {
+  if (!req.session?.account) {
     return res.redirect('/login-page');
   }
+  return next();
+};
 
-  const decoded = jwt.verify(token, process.env.JWT_SECRET);
-  if (!decoded) {
-    console.log('invalid token');
-    return res.redirect('/login-page');
+const requiresLogout = (req, res, next) => {
+  if (req.session?.account) {
+    return res.redirect('/');
   }
-  req.user = decoded;
   return next();
 };
 
 module.exports = {
-  auth,
+  requiresLogin,
+  requiresLogout,
 };

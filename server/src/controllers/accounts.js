@@ -1,28 +1,42 @@
 const lib = require('../lib/accounts');
 
+const logout = (req, res) => {
+  req.session.destroy();
+  res.redirect('/');
+};
+
 const signup = async (req, res) => {
   try {
     const { username, password, accessCode } = req.body;
-    await lib.signup(username, password, accessCode);
-    res.status(201).send({ message: 'Account created' });
+    const response = await lib.signup(username, password, accessCode);
+    if (response.error) {
+      return res.status(response.status).send({ message: response.error });
+    }
+    req.session.account = response;
+    return res.json({ redirect: '/' });
   } catch (error) {
     console.log(`signup: ${error.stack}`);
-    res.status(400).send({ message: error.message });
+    return res.status(400).send({ message: error.message });
   }
 };
 
 const login = async (req, res) => {
   try {
     const { username, password } = req.body;
-    const token = await lib.login(username, password);
-    res.send({ message: 'Logged in', token });
+    const response = await lib.login(username, password);
+    if (response.error) {
+      return res.status(response.status).send({ message: response.error });
+    }
+    req.session.account = response;
+    return res.json({ redirect: '/' });
   } catch (error) {
     console.log(`login: ${error.stack}`);
-    res.status(400).send({ message: error.message });
+    return res.status(400).send({ message: error.message });
   }
 };
 
 module.exports = {
   signup,
   login,
+  logout,
 };

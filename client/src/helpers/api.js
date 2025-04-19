@@ -55,5 +55,14 @@ export async function logout() {
 }
 
 export async function getAllGames() {
-
+  try {
+    const res = await fetch('/game', {
+      method: 'GET',
+    })
+    const data = await res.json();
+    return data.gameObject;
+  } catch (err) {
+    console.log(`logout: ${err}`)
+    return { error: err.message };
+  }
 }

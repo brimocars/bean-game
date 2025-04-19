@@ -1,10 +1,19 @@
 const { MongoClient } = require('mongodb');
+const { getSocket } = require('../lib/utils/socket');
 
 class GameObjects {
   constructor() {
     this.dbName = 'beans';
     this.collectionName = 'gameObjects';
     this.client = undefined;
+    this.socket = undefined;
+  }
+
+  async getSocket() {
+    if (!this.socket) {
+      this.socket = getSocket();
+    }
+    return this.socket;
   }
 
   async getClient() {
@@ -79,6 +88,8 @@ class GameObjects {
           upsert: true,
         },
       );
+      const socket = await this.getSocket();
+      socket.emit('gameObjectUpdated', gameObject);
     } catch (error) {
       console.log('DB insert error:', error);
     }
@@ -88,6 +99,8 @@ class GameObjects {
     try {
       const collection = await this.getCollection();
       await collection.deleteOne({ gameId });
+      const socket = await this.getSocket();
+      socket.emit('gameObjectDeleted', gameId);
     } catch (error) {
       console.log('DB delete error:', error);
     }

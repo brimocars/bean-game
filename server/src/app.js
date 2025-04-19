@@ -7,6 +7,9 @@ const mongoose = require('mongoose');
 const session = require('express-session');
 const { RedisStore } = require('connect-redis');
 const redis = require('redis');
+const { Server } = require('socket.io');
+const http = require('http');
+const { setupSocket } = require('./lib/utils/socket');
 
 const routes = require('./routes');
 
@@ -45,7 +48,11 @@ redisClient.connect().then(() => {
   app.use(routes);
   app.use(favicon(`${__dirname}/../img/favicon.jpg`));
 
-  app.listen(port, () => {
+  const server = http.createServer(app);
+  const io = new Server(server);
+  setupSocket(io);
+
+  server.listen(port, () => {
     console.log(`Server running on port ${port}`);
   });
 });

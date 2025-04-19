@@ -3,15 +3,13 @@ import { createRoot } from 'react-dom/client'
 import React from 'react'
 
 import NavBar from './components/Navbar'
+import Games from './components/Games.jsx'
 
 const init = () => {
-
   createRoot(document.getElementById('root')).render(
     <StrictMode>
       <NavBar />
-      <div>
-        HI!
-      </div>
+      <Games />
     </StrictMode>,
   )
 }

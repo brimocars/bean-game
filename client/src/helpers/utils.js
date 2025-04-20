@@ -3,3 +3,7 @@ export function getCurrentUrl() {
   console.log(url);
   return url;
 }
+
+export function isActivePlayer(gameObject, player) {
+  return gameObject.activePlayerIndex === player.index;
+}

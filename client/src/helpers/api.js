@@ -62,7 +62,7 @@ export async function getAllGames() {
     const data = await res.json();
     return data.gameObject;
   } catch (err) {
-    console.log(`logout: ${err}`)
+    console.log(`get all games: ${err}`)
     return { error: err.message };
   }
 }

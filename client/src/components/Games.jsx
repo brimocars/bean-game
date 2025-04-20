@@ -17,7 +17,7 @@ function Games() {
     gamesRef.current = games;
   }, [games]);
 
-  useEffect(async () => {
+  useEffect(() => {
     socket.on('gameObjectUpdated', (newGameObject) => {
       console.log('gameObjectUpdated');
       const newGames = [...gamesRef.current];
@@ -35,25 +35,30 @@ function Games() {
       const newGames = [...(gamesRef.current.filter((game) => game.gameId !== deletedGameId))];
       setGames(newGames);
     });
-    
-    try {
-      const response = await api.getAllGames();
-      console.log(response);
-      setGames(response);
-    } catch (error) {
-      console.error('Error fetching games:', error);
+
+    const getGames = async () => {
+      try {
+        const response = await api.getAllGames();
+        console.log(response);
+        setGames(response);
+      } catch (error) {
+        console.error('Error fetching games:', error);
+      }
     }
+    getGames();
   }, []);
 
-  return (
-    <div>
-      {games.map((gameObject) => (
-        <Game 
-          gameObject={gameObject}
-        />
-      ))}
-    </div>
-  )
+  if (games) {
+    return (
+      <div>
+        {games.map((gameObject) => (
+          <Game
+            gameObject={gameObject}
+          />
+        ))}
+      </div>
+    )
+  }
 }
 
 export default Games

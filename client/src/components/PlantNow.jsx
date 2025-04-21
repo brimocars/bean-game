@@ -1,4 +1,4 @@
-function plantNow() {
+function plantNow({ cardsToPlantNow, player, gameObject}) {
 
 }
 

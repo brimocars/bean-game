@@ -66,3 +66,47 @@ export async function getAllGames() {
     return { error: err.message };
   }
 }
+
+// Note: For any of these /admin endpoints that return the modified gameObject, the returned gameObject isn't actually
+// used. The socket is setup to automatically update the gameObject whenever it changes in the database. I'm mostly
+// returning it out of habit and because it might be useful in the future and to catch any errors if data is undefinded
+
+export async function deleteCardFromHand(gameId, playerName, handIndex) {
+  try {
+    const res = await fetch(`/admin/hand?gameId=${gameId}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        playerName,
+        handIndex,
+      })
+    })
+    const data = await res.json();
+    return data;
+  } catch (err) {
+    console.log(`delete card from hand: ${err}`)
+    return { error: err.message };
+  }
+}
+
+export async function addCardToHand(gameId, playerName, cardName) {
+  try {
+    const res = await fetch(`/admin/hand?gameId=${gameId}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        playerName,
+        cardName,
+      })
+    })
+    const data = await res.json();
+    return data;
+  } catch (err) {
+    console.log(`add card to hand: ${err}`)
+    return { error: err.message };
+  }
+}

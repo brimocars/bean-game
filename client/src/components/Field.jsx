@@ -1,4 +1,4 @@
-function field() {
+function field({ field, player, gameObject}) {
 
 }
 

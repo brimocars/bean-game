@@ -17,14 +17,26 @@ function Player({ player, gameObject }) {
   return (
     <div className="player">
       <div className="expandable-title" onClick={toggleExpand}>
-        <span className={`name ${isActive ? 'active' : ''}`}>{player.name}{isActive ? ' (their turn)' : ''}</span>
+        <span className={`name ${isActive ? 'active' : 'inactive'}`}>{player.name}{isActive ? ' (their turn)' : ''}</span>
         <span className={`caret ${isExpanded ? 'rotated' : ''}`}>^</span>
       </div>
       {isExpanded && 
       <div className="expandable-content player-content">
-        <Hand />
-        <Field />
-        <PlantNow />
+        <Hand 
+          hand={player.hand}
+          player={player}
+          gameObject={gameObject}
+        />
+        <Field
+          field={player.field}
+          player={player}
+          gameObject={gameObject}
+        />
+        <PlantNow 
+          cardsToPlantNow={player.cardsToPlantNow}
+          player={player}
+          gameObject={gameObject}
+        />
         
       </div>}
     </div>

@@ -87,11 +87,13 @@ const startGame = async (gameId) => {
   }
 
   const deck = [];
+  const uniqueCardsInDeck = {};
   // eslint-disable-next-line no-unused-vars
   for (const [key, value] of Object.entries(defaultBeans)) {
     for (let i = 0; i < value.amountInDeck; i++) {
       deck.push(value);
     }
+    uniqueCardsInDeck[key] = value;
   }
 
   switch (gameObject.players.length) {
@@ -102,19 +104,25 @@ const startGame = async (gameId) => {
       for (let i = 0; i < garden.amountInDeck; i++) {
         deck.push(garden);
       }
+      uniqueCardsInDeck.coffee = coffee;
+      uniqueCardsInDeck.garden = garden;
+
       gameObject.players.forEach((player) => {
         player.maxFields = 3;
       });
       break;
     case 4:
     case 5:
-      // TODO: uncomment
-      // for (let i = 0; i < cocoa.amountInDeck; i++) {
-      //   deck.push(cocoa);
-      // }
+      for (let i = 0; i < cocoa.amountInDeck; i++) {
+        deck.push(cocoa);
+      }
       for (let i = 0; i < garden.amountInDeck; i++) {
         deck.push(garden);
       }
+
+      uniqueCardsInDeck.cocoa = cocoa;
+      uniqueCardsInDeck.garden = garden;
+
       gameObject.players.forEach((player) => {
         player.maxFields = 2;
       });
@@ -124,6 +132,8 @@ const startGame = async (gameId) => {
       for (let i = 0; i < coffee.amountInDeck; i++) {
         deck.push(cocoa);
       }
+      uniqueCardsInDeck.cocoa = cocoa;
+
       gameObject.players.forEach((player) => {
         player.maxFields = 2;
       });
@@ -151,6 +161,7 @@ const startGame = async (gameId) => {
   const shuffledDeck = shuffle(deck);
   gameObject.draw = [];
   gameObject.discard = [];
+  gameObject.uniqueCardsInDeck = uniqueCardsInDeck;
   gameObject.timesShuffled = 0;
   gameObject.activeTrades = [];
   gameObject.turnedCards = [];

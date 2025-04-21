@@ -1,10 +1,10 @@
 .game {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 50% 50%;
   grid-template-rows: 30px 1fr;
   justify-content: center;
   background-color: #d6b78d;
-  height: 400px;
+  height: 80vh;
   width: 100%;
   border: 2px solid #000;
   margin: 20px 0px;
@@ -38,23 +38,27 @@
   grid-template-columns: auto;
   justify-content: baseline;
   align-items: center;
+  max-width: 100%;
 }
 
 .players h2 {
   grid-row: 1 / 2;
   background-color: #e57b5e;
   padding: 0px;
-  margin: 0px; 
+  margin: 0px 0px 10px 0px; 
   height: 100%;
   align-content: center;
   border-radius: 5px;
+  width: 100%;
 }
 
 .players-no-title {
   grid-row: 2 / 3;
   display: flex;
   flex-direction: column;
-  justify-content: space-evenly;
+  justify-content: flex-start;
   align-items: center;
   height: 100%;
+  max-width: 100%;
+  overflow-x: auto;
 }

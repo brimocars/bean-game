@@ -1,0 +1,8 @@
+.add-card-button {
+  background-color: #4caf50;
+  color: white;
+  border: 1px solid #000;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+}

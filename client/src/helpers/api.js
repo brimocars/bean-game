@@ -110,3 +110,41 @@ export async function addCardToHand(gameId, playerName, cardName) {
     return { error: err.message };
   }
 }
+
+export async function joinGame(gameCode, playerName) {
+  try {
+    const res = await fetch(`/setup/join?gameCode=${gameCode}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        playerName,
+      })
+    })
+    const data = await res.json();
+    return data;
+  } catch (err) {
+    console.log(`join game: ${err}`)
+    return { error: err.message };
+  }
+}
+
+export async function leaveGame(gameId, playerName) {
+  try {
+    const res = await fetch(`/setup/leave?gameId=${gameId}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        playerName,
+      })
+    })
+    const data = await res.json();
+    return data;
+  } catch (err) {
+    console.log(`leave game: ${err}`)
+    return { error: err.message };
+  }
+}

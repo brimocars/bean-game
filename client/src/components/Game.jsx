@@ -1,12 +1,13 @@
 import { useState } from 'react';
 import Player from "./Player.jsx";
+import DeleteButton from './DeleteButton.jsx';
 import UnstartedPlayer from "./UnstartedPlayer.jsx";
 import './game.css'
 import * as api from '../helpers/api'
 
 function game({ gameObject }) {
   const [name, setName] = useState('')
-  
+
   // if the game hasn't started
   if (!gameObject.phase) {
     return (
@@ -14,6 +15,9 @@ function game({ gameObject }) {
         <div className="top-info">
           <span className="item-label">gameId: </span><span className="item">{gameObject.gameId}</span>
           <span className="item-label">gameCode: </span><span className="item">{gameObject.gameCode}</span>
+          <DeleteButton
+            onClick={() => api.deleteGame(gameObject.gameId)}
+          />
         </div>
         <div className="players">
           <h2>Players</h2>
@@ -43,6 +47,9 @@ function game({ gameObject }) {
         <span className="item-label">gameId: </span><span className="item">{gameObject.gameId}</span>
         <span className="item-label">gameCode: </span><span className="item">{gameObject.gameCode}</span>
         <span className="item-label">phase: </span><span className="item">{gameObject.phase}</span>
+        <DeleteButton
+          onClick={() => api.deleteGame(gameObject.gameId)}
+        />
       </div>
       <div className="players">
         <h2>Players</h2>

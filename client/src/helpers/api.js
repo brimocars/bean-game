@@ -111,6 +111,9 @@ export async function addCardToHand(gameId, playerName, cardName) {
   }
 }
 
+
+// Normal endpoints that are part of the actual game logic - no admin required
+
 export async function joinGame(gameCode, playerName) {
   try {
     const res = await fetch(`/setup/join?gameCode=${gameCode}`, {
@@ -145,6 +148,19 @@ export async function leaveGame(gameId, playerName) {
     return data;
   } catch (err) {
     console.log(`leave game: ${err}`)
+    return { error: err.message };
+  }
+}
+
+export async function deleteGame(gameId, playerName) {
+  try {
+    const res = await fetch(`/setup/?gameId=${gameId}`, {
+      method: 'DELETE',
+    })
+    const data = await res.json();
+    return data;
+  } catch (err) {
+    console.log(`delete game: ${err}`)
     return { error: err.message };
   }
 }

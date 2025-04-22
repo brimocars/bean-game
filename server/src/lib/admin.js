@@ -28,11 +28,11 @@ const addToHand = async (gameId, playerName, cardName) => {
   if (!player) {
     throw new Error('Player not found');
   }
-  const cardToAdd = gameObject.uniqueCardsInDeck.find((c) => c.name === cardName);
+  const cardToAdd = gameObject.uniqueCardsInDeck[cardName];
   if (!cardToAdd) {
     throw new Error('Card not found in deck');
   }
-  player.hand.push(cardName);
+  player.hand.push(cardToAdd);
   gameObject.updateId = uuidv4();
   await gameObjects.insert(gameObject);
   return gameObject;

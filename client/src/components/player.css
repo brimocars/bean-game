@@ -5,6 +5,7 @@
   margin: 10px 0px;
   max-width: 100%;
   overflow-x: hidden;
+  overflow-y: auto;
 }
 
 .expandable-title {

@@ -6,3 +6,9 @@
   font-size: 16px;
   cursor: pointer;
 }
+
+.add-card {
+  border: dashed 1px #000;
+  min-width: 100px;
+  height: 140px;
+}

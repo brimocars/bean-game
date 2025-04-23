@@ -23,7 +23,7 @@ function trade({ trade, gameObject }) {
 
   return (
     <div className="trade">
-      <div className="expandable-title trade-title" onClick={() => setIsExpanded(!isExpanded)}>
+      <div className="expandable-trade-title" onClick={() => setIsExpanded(!isExpanded)}>
         <span className='tradeId'>{trade.tradeId}</span>
         <span className={`caret ${isExpanded ? 'rotated' : ''}`}>^</span>
         <DeleteButton

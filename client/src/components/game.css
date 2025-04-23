@@ -81,7 +81,7 @@
   overflow-y: auto;
 }
 
-.trades h2 {
+.trades > h2 {
   grid-row: 1 / 2;
   background-color: #c19b43;
   padding: 0px;

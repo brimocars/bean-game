@@ -71,6 +71,11 @@
   border-radius: 5px;
 }
 
+.player-content .delete {
+  grid-column: 2 / 3;
+  grid-row: 1 / 2;
+}
+
 .expandable-content {
   border-radius: 5px;
 }

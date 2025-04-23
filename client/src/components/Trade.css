@@ -4,8 +4,7 @@
   border-radius: 5px;
   margin: 10px 0px;
   max-width: 100%;
-  overflow-x: hidden;
-  overflow-y: auto;
+  overflow: hidden;
 }
 
 .trade-content {
@@ -40,10 +39,11 @@
   border-radius: 5px;
   grid-column: 1 / 4;
   grid-row: 1 / 2;
-  width: 100%;
+  font-size: 20px;
+  font-weight: bold;
 }
 
-.expandable-title {
+.expandable-trade-title {
   cursor: pointer;
   width: 100%;
   display: grid;
@@ -52,14 +52,30 @@
   border-radius: 5px;
 }
 
-.caret {
-  grid-column: 2 / 3;
+.expandable-trade-title .delete {
   grid-row: 1 / 2;
-  margin: 5px;
-  animation: flipOut 0.125s ease-in-out;
+  grid-column: 3 / 4;
+  align-self: center;
+  justify-self: center;
+}
+
+.expandable-trade-title .caret{
+  display: block;
+  font-weight: bold;
+  font-size: 20px;
   border-radius: 5px;
 }
 
-.delete {
-  grid-column: 3 / 4;
+.cards-to-give {
+  grid-column: 1 / 2;
+  grid-row: 2 / 3;
+  grid-template-columns: 1fr;
+  grid-template-rows: 30px 1fr;
+}
+
+.cards-to-give {
+  grid-column: 2 / 3;
+  grid-row: 2 / 3;
+  grid-template-columns: 1fr;
+  grid-template-rows: 30px 1fr;
 }

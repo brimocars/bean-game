@@ -1,0 +1,65 @@
+.trade {
+  width: 100%;
+  background-color: #c19b43;
+  border-radius: 5px;
+  margin: 10px 0px;
+  max-width: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.trade-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 40px 1fr;
+}
+
+.trade-participant {
+  border-radius: 5px;
+  background-color: #e57b5e;
+  margin: 5px;
+  font-size: 20px;
+  font-weight: bold;
+  border: 1px solid #000;
+}
+
+.trader {
+  grid-column: 1 / 2;
+  grid-row: 1 / 2;
+
+}
+
+.tradee {
+  grid-column: 2 / 3;
+  grid-row: 1 / 2;
+}
+
+.tradeId {
+  border: 1px solid #000;
+  margin: 5px;
+  border-radius: 5px;
+  grid-column: 1 / 4;
+  grid-row: 1 / 2;
+  width: 100%;
+}
+
+.expandable-title {
+  cursor: pointer;
+  width: 100%;
+  display: grid;
+  grid-template-columns: auto 30px 30px;
+  grid-template-rows: 1fr;
+  border-radius: 5px;
+}
+
+.caret {
+  grid-column: 2 / 3;
+  grid-row: 1 / 2;
+  margin: 5px;
+  animation: flipOut 0.125s ease-in-out;
+  border-radius: 5px;
+}
+
+.delete {
+  grid-column: 3 / 4;
+}

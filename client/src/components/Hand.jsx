@@ -1,16 +1,8 @@
 import { useState } from 'react'
 import './hand.css'
 import * as api from '../helpers/api'
-import DeleteButton from './DeleteButton'
 import AddCard from './AddCard'
-
-const deleteCard = (gameId, playerName, handIndex) => {
-  api.deleteCardFromHand(gameId, playerName, handIndex)
-}
-
-const addCard = (gameId, playerName, cardName) => {
-  api.addCardToHand(gameId, playerName, cardName)
-}
+import Card from './Card'
 
 function hand({ hand, player, gameObject}) {
   const [selectedCardName, setSelectedCardName] = useState(Object.keys(gameObject.uniqueCardsInDeck)[0] || '');
@@ -20,19 +12,16 @@ function hand({ hand, player, gameObject}) {
       <h2>Hand</h2>
       <div className="hand-cards">
         {hand?.map((card, index) => (
-          <div className="card">
-            <DeleteButton
-              onClick={() => deleteCard(gameObject.gameId, player.name, index)}
-              />
-            <div className='card-content'>
-              <span className="card-name">{card.name}</span>
-              <span className="card-amount-in-deck">{card.amountInDeck}</span>
-              <span className="card-amount-to-money">{card.amountToMoney?.join(' ')}</span>
-            </div>
-          </div>
+          <Card 
+            card={card}
+            deleteCard={api.deleteCardFromHand}
+            gameId={gameObject.gameId}
+            playerName={player.name}
+            index={index}
+          />
         ))}
         <AddCard
-          onClick={() => addCard(gameObject.gameId, player.name, selectedCardName)}
+          onClick={() => api.addCardToHand(gameObject.gameId, player.name, selectedCardName)}
           uniqueCardsInDeck={gameObject?.uniqueCardsInDeck}
           setSelectedCardName={setSelectedCardName}
         />

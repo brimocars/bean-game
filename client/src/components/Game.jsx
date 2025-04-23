@@ -2,6 +2,7 @@ import { useState } from 'react';
 import Player from "./Player.jsx";
 import DeleteButton from './DeleteButton.jsx';
 import UnstartedPlayer from "./UnstartedPlayer.jsx";
+import Trade from "./Trade.jsx";
 import './game.css'
 import * as api from '../helpers/api'
 
@@ -62,15 +63,17 @@ function game({ gameObject }) {
           ))}
         </div>
       </div>
-      {/* <div className="trades">
+      <div className="trades">
         <h2>Trades</h2>
-        {activeTrades?.map((trade) => (
-          <Trade
-            trade={trade}
-            gameObject={gameObject}
-          />
-        ))}
-      </div> */}
+        <div className="trades-no-title">
+          {activeTrades?.map((trade) => (
+            <Trade
+              trade={trade}
+              gameObject={gameObject}
+            />
+          ))}
+        </div>
+      </div>
     </div>
   );
 }

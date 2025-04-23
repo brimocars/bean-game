@@ -152,7 +152,7 @@ export async function leaveGame(gameId, playerName) {
   }
 }
 
-export async function deleteGame(gameId, playerName) {
+export async function deleteGame(gameId) {
   try {
     const res = await fetch(`/setup/?gameId=${gameId}`, {
       method: 'DELETE',
@@ -161,6 +161,23 @@ export async function deleteGame(gameId, playerName) {
     return data;
   } catch (err) {
     console.log(`delete game: ${err}`)
+    return { error: err.message };
+  }
+}
+
+export async function deleteTrade(gameId, tradeId) {
+  try {
+    const res = await fetch(`/play/trade?gameId=${gameId}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        tradeId,
+      })
+    })
+  } catch (err) {
+    console.log(`delete trade: ${err}`)
     return { error: err.message };
   }
 }

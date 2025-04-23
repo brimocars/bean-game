@@ -5,10 +5,23 @@
   border-radius: 5px;
   font-size: 16px;
   cursor: pointer;
+  display: inline;
 }
 
 .add-card {
   border: dashed 1px #000;
   min-width: 100px;
   height: 140px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.add-card-text {
+  padding: 5px 0px;
+}
+
+.card-select {
+  display: inline;
 }

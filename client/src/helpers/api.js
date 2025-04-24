@@ -181,3 +181,49 @@ export async function deleteTrade(gameId, tradeId) {
     return { error: err.message };
   }
 }
+
+export async function turn(gameId) {
+  try {
+    const res = await fetch(`/play/turn?gameId=${gameId}`, {
+      method: 'POST',
+    });
+    const data = await res.json();
+    return data;
+  } catch (err) {
+    console.log(`turn: ${err}`)
+    return { error: err.message };
+  }
+}
+
+export async function endTrading(gameId) {
+  try {
+    const res = await fetch(`/play/trade/end?gameId=${gameId}`, {
+      method: 'POST',
+    });
+    const data = await res.json();
+    return data;
+  } catch (err) {
+    console.log(`end trading: ${err}`)
+    return { error: err.message };
+  }
+}
+
+export async function acceptTrade(gameId, tradeId, chosenCardsToReceive) {
+  try {
+    const res = await fetch(`/play/trade/accept?gameId=${gameId}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        tradeId,
+        chosenCardsToReceive
+      })
+    })
+    const data = await res.json();
+    return data;
+  } catch (err) {
+    console.log(`accept trade: ${err}`)
+    return { error: err.message };
+  }
+}

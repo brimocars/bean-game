@@ -48,6 +48,8 @@
   margin: 5px;
   animation: flipOut 0.125s ease-in-out;
   border-radius: 5px;
+  justify-self: center;
+  align-self: center;
 }
 
 @keyframes flipIn {

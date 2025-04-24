@@ -2,6 +2,7 @@ const shuffle = require('shuffle-array');
 const { v4: uuidv4 } = require('uuid');
 const gameObjects = require('../db/gameObjects.js');
 const { Phases } = require('./utils/enums.js');
+const utils = require('./utils/misc.js');
 
 const shuffleDrawPileOrEndGame = async (gameId) => {
   const gameObject = await gameObjects.get(gameId);
@@ -221,6 +222,16 @@ const acceptTrade = async (gameId, tradeId, chosenCardsToReceive) => {
     throw new Error('Cannot trade away turned cards because you are the active player');
   }
 
+  if ((chosenCardsToReceive.hand?.length ?? 0)
+    + (chosenCardsToReceive.turnedCards?.length ?? 0) !== cardsToReceive.length) {
+    throw new Error('Invalid number of cards to receive');
+  }
+
+  if (utils.arrayHasDuplicates(chosenCardsToReceive.hand)
+    || utils.arrayHasDuplicates(chosenCardsToReceive.turnedCards)) {
+    throw new Error('Cannot trade the same card twice');
+  }
+
   const { turnedCards } = gameObject;
   if (tradee === activePlayer) {
     const usedTurnedIndexes = new Set();
@@ -235,9 +246,6 @@ const acceptTrade = async (gameId, tradeId, chosenCardsToReceive) => {
   }
   const usedHandIndexes = new Set();
   chosenCardsToReceive.hand?.forEach((cardIndex) => {
-    // if (!tradee.hand[cardIndex]) {
-    //   throw new Error('Card not available');
-    // }
     const foundCardIndex = cardsToReceive
       .findIndex((cardName, index) => tradee.hand[cardIndex].name === cardName && !usedHandIndexes.has(index));
     if (foundCardIndex === -1) {

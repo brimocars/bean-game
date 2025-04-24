@@ -11,15 +11,12 @@ function Games() {
   const [games, setGames] = useState([]);
   const gamesRef = useRef(games);
 
-  console.log(`href: ${location.href}`);
-
   useEffect(() => {
     gamesRef.current = games;
   }, [games]);
 
   useEffect(() => {
     socket.on('gameObjectUpdated', (newGameObject) => {
-      console.log('gameObjectUpdated');
       const newGames = [...gamesRef.current];
       const currentGameIndex = newGames.findIndex((game) => game.gameId === newGameObject.gameId);
       if (currentGameIndex === -1) {

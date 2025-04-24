@@ -7,3 +7,7 @@ export function getCurrentUrl() {
 export function isActivePlayer(gameObject, player) {
   return gameObject.activePlayerIndex === player.index;
 }
+
+export function getActivePlayer(gameObject) {
+  return gameObject.players.find((player) => gameObject.activePlayerIndex === player.index);
+}

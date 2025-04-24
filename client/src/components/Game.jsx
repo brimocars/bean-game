@@ -5,6 +5,7 @@ import UnstartedPlayer from "./UnstartedPlayer.jsx";
 import Trade from "./Trade.jsx";
 import './game.css'
 import * as api from '../helpers/api'
+import * as utils from '../helpers/utils'
 
 function game({ gameObject }) {
   const [name, setName] = useState('')
@@ -51,6 +52,14 @@ function game({ gameObject }) {
         <DeleteButton
           onClick={() => api.deleteGame(gameObject.gameId)}
         />
+      </div>
+      <div className="game-buttons">
+        {gameObject.phase === 'plant' && utils.getActivePlayer(gameObject).plantedThisTurn <= 2 &&
+          <button onClick={() => api.turn(gameObject.gameId)}>Turn Cards</button>
+        }
+        {gameObject.phase === 'trade' &&
+          <button onClick={() => api.endTrading(gameObject.gameId)}>End Trading</button>
+        }
       </div>
       <div className="players">
         <h2>Players</h2>

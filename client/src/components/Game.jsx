@@ -21,6 +21,11 @@ function game({ gameObject }) {
             onClick={() => api.deleteGame(gameObject.gameId)}
           />
         </div>
+        <div className="game-buttons">
+          {gameObject.players.length >= 3 &&
+            <button onClick={() => api.startGame(gameObject.gameId)}>Start</button>
+          }
+        </div>
         <div className="players">
           <h2>Players</h2>
           <div className="players-no-title">

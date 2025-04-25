@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { isActivePlayer } from '../helpers/utils';
 import './player.css';
 import Hand from './Hand.jsx';
-import Field from './Field.jsx';
+import Fields from './Fields.jsx';
 import PlantNow from './PlantNow.jsx';
 
 function Player({ player, gameObject }) {
@@ -24,7 +24,7 @@ function Player({ player, gameObject }) {
             player={player}
             gameObject={gameObject}
           />
-          <Field
+          <Fields
             field={player.field}
             player={player}
             gameObject={gameObject}

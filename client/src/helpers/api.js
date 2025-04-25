@@ -227,3 +227,19 @@ export async function acceptTrade(gameId, tradeId, chosenCardsToReceive) {
     return { error: err.message };
   }
 }
+
+export async function startGame(gameId) {
+  try {
+    const res = await fetch(`/setup/start?gameId=${gameId}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+    })
+    const data = await res.json();
+    return data;
+  } catch (err) {
+    console.log(`start game: ${err}`)
+    return { error: err.message };
+  }
+}

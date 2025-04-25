@@ -84,8 +84,8 @@
 
 .player-content {
   display: grid;
-  grid-template-columns: auto 30px;
-  grid-template-rows: 2fr 3fr 2fr;
+  grid-template-columns: auto;
+  grid-template-rows: 1fr 1fr 1fr;
   justify-content: center;
   align-items: center;
   max-width: 100%;

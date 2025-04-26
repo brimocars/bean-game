@@ -24,7 +24,20 @@ const addToHand = async (req, res) => {
   }
 };
 
+const plantFromAnywhereInHand = async (req, res) => {
+  try {
+    const { gameId } = req.query;
+    const { playerName, handIndex, fieldIndex } = req.body;
+    const gameObject = await lib.plantFromAnywhereInHand(gameId, playerName, handIndex, fieldIndex);
+    res.send({ message: 'Card planted from hand', gameObject });
+  } catch (error) {
+    console.log(`plant from anywhere in hand: ${error.stack}`);
+    res.status(400).send({ message: error.message });
+  }
+};
+
 module.exports = {
   deleteFromHand,
   addToHand,
+  plantFromAnywhereInHand,
 };

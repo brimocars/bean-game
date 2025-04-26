@@ -18,6 +18,7 @@ function hand({ hand, player, gameObject}) {
             gameId={gameObject.gameId}
             playerName={player.name}
             index={index}
+            isDraggable={true}
           />
         ))}
         <AddCard

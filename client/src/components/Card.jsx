@@ -1,9 +1,13 @@
 import './card.css'
 import DeleteButton from './DeleteButton'
 
-function card({ card, deleteCard, gameId, playerName, index }) {
+const handleDragStart = (e, index, source, cardName) => {
+  e.dataTransfer.setData('application/json', JSON.stringify({ index, source, cardName }));
+};
+
+function card({ card, deleteCard, gameId, playerName, index, isDraggable, source }) {
   return (
-    <div className="card">
+    <div className="card" draggable={isDraggable} onDragStart={isDraggable ? (e) => handleDragStart(e, index, source, card.name) : undefined}>
       {deleteCard &&
         <DeleteButton
           onClick={() => deleteCard(gameId, playerName, index)}

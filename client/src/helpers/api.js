@@ -111,6 +111,26 @@ export async function addCardToHand(gameId, playerName, cardName) {
   }
 }
 
+export async function plantFromAnywhereInHand(gameId, playerName, handIndex, fieldIndex) {
+  try {
+    const res = await fetch(`/admin/plant?gameId=${gameId}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        playerName,
+        handIndex,
+        fieldIndex,
+      })
+    })
+    const data = await res.json();
+    return data;
+  } catch (err) {
+    console.log(`plant from anywhere in hand: ${err}`)
+    return { error: err.message };
+  }
+}
 
 // Normal endpoints that are part of the actual game logic - no admin required
 
@@ -240,6 +260,47 @@ export async function startGame(gameId) {
     return data;
   } catch (err) {
     console.log(`start game: ${err}`)
+    return { error: err.message };
+  }
+}
+
+export async function harvest(gameId, playerName, fieldIndex) {
+  try {
+    const res = await fetch(`/play/harvest?gameId=${gameId}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        playerName,
+        fieldIndex,
+      })
+    })
+    const data = await res.json();
+    return data;
+  } catch (err) {
+    console.log(`harvest: ${err}`)
+    return { error: err.message };
+  }
+}
+
+export async function plantFromPlantNow(gameId, playerName, cardName, fieldIndex) {
+  try {
+    const res = await fetch(`/play/plantFromPlantNow?gameId=${gameId}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        playerName,
+        cardName,
+        fieldIndex,
+      })
+    })
+    const data = await res.json();
+    return data;
+  } catch (err) {
+    console.log(`plant from plant now: ${err}`)
     return { error: err.message };
   }
 }

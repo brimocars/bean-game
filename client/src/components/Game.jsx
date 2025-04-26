@@ -7,8 +7,27 @@ import './game.css'
 import * as api from '../helpers/api'
 import * as utils from '../helpers/utils'
 
+const getRandomName = (players) => {
+    // autofill the input with a new name because it's fast and I don't feel like typing every time
+    const lowercaseAsciiStart = 97;
+    let letterIndex;
+    let newName;
+    do { 
+      letterIndex = Math.floor(Math.random() * 26);
+      newName = String.fromCharCode(lowercaseAsciiStart + letterIndex);
+    } while (players.some((player) => player.name === newName));
+    return newName;
+}
+
+const join = async (gameCode, name, setName, players) => {
+  await api.joinGame(gameCode, name);
+
+  const newName = getRandomName(players);
+  setName(newName);
+}
+
 function game({ gameObject }) {
-  const [name, setName] = useState('')
+  const [name, setName] = useState(getRandomName(gameObject.players));
 
   // if the game hasn't started
   if (!gameObject.phase) {
@@ -39,7 +58,7 @@ function game({ gameObject }) {
               <div className="add-player">
                 <span className="add-player-text">Add player: </span>
                 <input type='text' name='name' value={name} onInput={(e) => setName(e.target.value)} placeholder='playername..' />
-                <button className="add-player-button" onClick={() => api.joinGame(gameObject.gameCode, name)}>+</button>
+                <button className="add-player-button" onClick={() => join(gameObject.gameCode, name, setName, gameObject.players)}>+</button>
               </div>}
           </div>
         </div>

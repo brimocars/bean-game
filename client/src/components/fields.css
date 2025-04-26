@@ -1,3 +1,37 @@
-.field-card {
+.field-cards {
   grid-row: 2 / 3;
+  margin-left: 10px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+  border-radius: 5px;
+  overflow-x: auto;
+  max-width: 100%;
+  justify-content: center;
+}
+
+.field-card-amount {
+  font-size: 20px;
+}
+
+.harvest-button {
+  background-color: #0f7525;
+  color: white;
+  padding: 5px 10px;
+  display: inline-block;
+  font-size: 16px;
+  font-weight: bold;
+  margin: 0px 10px;
+  cursor: pointer;
+  border-radius: 5px;
+  border: 1px solid #000;
+}
+
+.other-player-info > * {
+  font-size: 20px;
+  font-weight: bold;
+  border-radius: 5px;
+  border: 1px solid #000;
+  padding: 5px 2px;
 }

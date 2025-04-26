@@ -25,7 +25,7 @@ function Player({ player, gameObject }) {
             gameObject={gameObject}
           />
           <Fields
-            field={player.field}
+            fields={player.fields}
             player={player}
             gameObject={gameObject}
           />

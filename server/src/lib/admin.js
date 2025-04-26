@@ -72,8 +72,50 @@ const plantFromAnywhereInHand = async (gameId, playerName, handIndex, fieldIndex
   return gameObject;
 };
 
+const deleteFromPlantNow = async (gameId, playerName, plantNowIndex) => {
+  const gameObject = await gameObjects.get(gameId);
+  if (!gameObject) {
+    throw new Error('Game not found');
+  }
+  const player = gameObject.players.find((p) => p.name === playerName);
+  if (!player) {
+    throw new Error('Player not found');
+  }
+  if (!player.cardsToPlantNow) {
+    throw new Error('No cards to plant now');
+  }
+  if (plantNowIndex < 0 || plantNowIndex >= player.cardsToPlantNow.length) {
+    throw new Error('Invalid plant now index');
+  }
+  player.cardsToPlantNow.splice(plantNowIndex, 1);
+  gameObject.updateId = uuidv4();
+  await gameObjects.insert(gameObject);
+  return gameObject;
+};
+
+const addToPlantNow = async (gameId, playerName, cardName) => {
+  const gameObject = await gameObjects.get(gameId);
+  if (!gameObject) {
+    throw new Error('Game not found');
+  }
+  const player = gameObject.players.find((p) => p.name === playerName);
+  if (!player) {
+    throw new Error('Player not found');
+  }
+  const cardToAdd = gameObject.uniqueCardsInDeck[cardName];
+  if (!cardToAdd) {
+    throw new Error('Card not found in deck');
+  }
+  player.cardsToPlantNow.push(cardToAdd);
+  gameObject.updateId = uuidv4();
+  await gameObjects.insert(gameObject);
+  return gameObject;
+};
+
 module.exports = {
   deleteFromHand,
   addToHand,
   plantFromAnywhereInHand,
+  deleteFromPlantNow,
+  addToPlantNow,
 };

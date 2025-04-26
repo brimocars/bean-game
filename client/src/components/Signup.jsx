@@ -1,7 +1,7 @@
 import { useState } from 'react'
 
 import * as api from '../helpers/api'
-import './Signup.css'
+import './signup.css'
 
 async function handleSignup(username, password, accessCode, setShowSignup) {
   await api.signup(username, password, accessCode);

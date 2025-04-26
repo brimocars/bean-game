@@ -19,6 +19,7 @@ function hand({ hand, player, gameObject}) {
             playerName={player.name}
             index={index}
             isDraggable={true}
+            source="hand"
           />
         ))}
         <AddCard

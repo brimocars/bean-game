@@ -132,6 +132,46 @@ export async function plantFromAnywhereInHand(gameId, playerName, handIndex, fie
   }
 }
 
+export async function deleteCardFromPlantNow(gameId, playerName, plantNowIndex) {
+  try {
+    const res = await fetch(`/admin/plantNow?gameId=${gameId}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        playerName,
+        plantNowIndex,
+      })
+    })
+    const data = await res.json();
+    return data;
+  } catch (err) {
+    console.log(`delete card from plant now: ${err}`)
+    return { error: err.message };
+  }
+}
+
+export async function addCardToPlantNow(gameId, playerName, cardName) {
+  try {
+    const res = await fetch(`/admin/plantNow?gameId=${gameId}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        playerName,
+        cardName,
+      })
+    })
+    const data = await res.json();
+    return data;
+  } catch (err) {
+    console.log(`add card to plant now: ${err}`)
+    return { error: err.message };
+  }
+}
+
 // Normal endpoints that are part of the actual game logic - no admin required
 
 export async function joinGame(gameCode, playerName) {

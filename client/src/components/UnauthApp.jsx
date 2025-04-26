@@ -1,4 +1,4 @@
-import './UnauthApp.css'
+import './unauthApp.css'
 import { useState, useEffect } from 'react'
 import Login from './Login.jsx'
 import Signup from './Signup.jsx'

@@ -1,0 +1,12 @@
+.plant-now-cards {
+  grid-row: 3 / 4;
+  margin-left: 10px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+  border-radius: 5px;
+  overflow-x: auto;
+  max-width: 100%;
+  justify-content: center;
+}

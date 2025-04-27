@@ -48,7 +48,30 @@ const login = async (username, password) => {
   return AccountModel.toAPI(account);
 };
 
+const changePassword = async (username, oldPassword, newPassword) => {
+  if (!username || !oldPassword || !newPassword) {
+    return {
+      status: 400,
+      error: 'Username, old password, and new password are required',
+    };
+  }
+  const account = await AccountModel.findOne({ username }).lean().exec();
+  const match = await bcrypt.compare(oldPassword, account.password);
+  if (!match) {
+    return {
+      status: 401,
+      error: 'Incorrect login information',
+    };
+  }
+
+  const hashedPassword = await bcrypt.hash(newPassword, 10);
+  await AccountModel.updateOne({ username }, { password: hashedPassword });
+
+  return AccountModel.toAPI(account);
+};
+
 module.exports = {
   signup,
   login,
+  changePassword,
 };

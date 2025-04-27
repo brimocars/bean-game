@@ -11,6 +11,7 @@ const getIndex = (req, res) => {
 
 router.post('/login', accounts.login);
 router.post('/signup', accounts.signup);
+router.post('/changePassword', accounts.changePassword);
 router.get('/logout', requiresLogin, accounts.logout);
 
 router.use('/login-page', requiresLogout, express.static('dist/src/login'));

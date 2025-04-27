@@ -13,5 +13,6 @@ router.use('/play', play);
 router.use('/game', getGame);
 router.use('/', dashboard);
 router.use('/admin', requiresLogin, admin);
+router.use((req, res) => res.redirect('/'));
 
 module.exports = router;

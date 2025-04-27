@@ -39,6 +39,25 @@ export async function signup(username, password, accessCode) {
   }
 }
 
+export async function changePassword(username, oldPassword, newPassword) {
+  try {
+    await fetch('/changePassword', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        username,
+        oldPassword,
+        newPassword
+      })
+    })
+  } catch (err) {
+    console.log(`change password: ${err}`)
+    return { error: err.message };
+  }
+}
+
 export async function logout() {
   try {
     const res = await fetch('/logout', {

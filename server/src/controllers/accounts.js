@@ -36,8 +36,24 @@ const login = async (req, res) => {
   }
 };
 
+const changePassword = async (req, res) => {
+  try {
+    const { username, oldPassword, newPassword } = req.body;
+    const response = await lib.changePassword(username, oldPassword, newPassword);
+    if (response.error) {
+      return res.status(response.status).send({ message: response.error });
+    }
+    req.session.account = response;
+    return res.json({ redirect: '/' });
+  } catch (error) {
+    console.log(`changePassword: ${error.stack}`);
+    return res.status(400).send({ message: error.message });
+  }
+};
+
 module.exports = {
   signup,
   login,
   logout,
+  changePassword,
 };

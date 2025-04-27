@@ -1,7 +1,7 @@
 .game {
   display: grid;
   grid-template-columns: 50% 50%;
-  grid-template-rows: 30px 40px 1fr;
+  grid-template-rows: 30px 40px auto 1fr;
   justify-content: center;
   background-color: #d6b78d;
   min-height: 80vh;
@@ -28,7 +28,7 @@
 
 .players {
   grid-column: 1 / 2;
-  grid-row: 3 / 4;
+  grid-row: 4 / 5;
   padding: 10px;
   background-color: #f9957a;
   border-right: 1px solid #000;
@@ -67,7 +67,7 @@
 
 .trades {
   grid-column: 2 / 3;
-  grid-row: 3 / 4;
+  grid-row: 4 / 5;
   padding: 10px;
   background-color: #d6b78d;
   border-right: 1px solid #000;
@@ -122,4 +122,120 @@
   border-radius: 5px;
   border-width: 0px;
   cursor: pointer;
+}
+
+.global-cards {
+  grid-column: 1 / 3;
+  grid-row: 3 / 4;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-radius: 5px;
+  overflow-x: auto;
+}
+
+@keyframes flipOut {
+  0% {
+    transform: rotate(180deg);
+  }
+  100% {
+    transform: rotate(0deg);
+  }
+}
+
+.caret {
+  grid-column: 2 / 3;
+  grid-row: 1 / 2;
+  margin: 5px;
+  animation: flipOut 0.125s ease-in-out;
+  border-radius: 5px;
+  justify-self: center;
+  align-self: center;
+}
+
+@keyframes flipIn {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(180deg);
+  }
+}
+
+.expandable-global-title {
+  cursor: pointer;
+  width: 100%;
+  display: grid;
+  grid-template-columns: auto 30px;
+  grid-template-rows: 1fr;
+  border-radius: 5px;
+}
+
+.expandable-global-title * {
+  display: block;
+  font-weight: bold;
+  font-size: 20px;
+  border-radius: 5px;
+}
+
+.expandable-content {
+  border-radius: 5px;
+}
+
+.global-info-content {
+  display: grid;
+  grid-template-columns: 3fr 3fr minmax(1fr, auto);
+  grid-template-rows: 1fr;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.global-info-content > * {
+  padding: 5px;
+  border: 3px solid #000;
+  border-radius: 5px;
+  background-color: #bababa;
+}
+
+
+
+.draw {
+  grid-column: 1 / 2;
+  grid-row: 1 / 2;
+  overflow: hidden;
+}
+
+
+.draw .delete {
+  grid-column: 2 / 3;
+  grid-row: 1 / 2;
+}
+
+.info-thing-no-title {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+  overflow-x: scroll;
+  gap: 10px;
+}
+
+.discard {
+  grid-column: 2 / 3;
+  grid-row: 1 / 2;
+  overflow: hidden;
+}
+
+.discard .delete {
+  grid-column: 2 / 3;
+  grid-row: 1 / 2;
+}
+
+.turned-cards {
+  grid-column: 3 / 4;
+  grid-row: 1 / 2;
+  overflow: hidden;
 }

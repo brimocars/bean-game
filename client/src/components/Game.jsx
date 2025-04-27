@@ -3,20 +3,22 @@ import Player from "./Player.jsx";
 import DeleteButton from './DeleteButton.jsx';
 import UnstartedPlayer from "./UnstartedPlayer.jsx";
 import Trade from "./Trade.jsx";
+import Card from './Card.jsx';
+import AddCard from './AddCard.jsx';
 import './game.css'
 import * as api from '../helpers/api'
 import * as utils from '../helpers/utils'
 
 const getRandomName = (players) => {
-    // autofill the input with a new name because it's fast and I don't feel like typing every time
-    const lowercaseAsciiStart = 97;
-    let letterIndex;
-    let newName;
-    do { 
-      letterIndex = Math.floor(Math.random() * 26);
-      newName = String.fromCharCode(lowercaseAsciiStart + letterIndex);
-    } while (players.some((player) => player.name === newName));
-    return newName;
+  // autofill the input with a new name because it's fast and I don't feel like typing every time
+  const lowercaseAsciiStart = 97;
+  let letterIndex;
+  let newName;
+  do {
+    letterIndex = Math.floor(Math.random() * 26);
+    newName = String.fromCharCode(lowercaseAsciiStart + letterIndex);
+  } while (players.some((player) => player.name === newName));
+  return newName;
 }
 
 const join = async (gameCode, name, setName, players) => {
@@ -28,6 +30,10 @@ const join = async (gameCode, name, setName, players) => {
 
 function game({ gameObject }) {
   const [name, setName] = useState(getRandomName(gameObject.players));
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [selectedDrawCardName, setSelectedDrawCardName] = useState(Object.keys(gameObject.uniqueCardsInDeck)[0] || '');
+  const [selectedDiscardCardName, setSelectedDiscardCardName] = useState(Object.keys(gameObject.uniqueCardsInDeck)[0] || '');
+
 
   // if the game hasn't started
   if (!gameObject.phase) {
@@ -78,11 +84,76 @@ function game({ gameObject }) {
         />
       </div>
       <div className="game-buttons">
-        {gameObject.phase === 'plant' && utils.getActivePlayer(gameObject).plantedThisTurn <= 2 &&
+        {gameObject.phase === 'plant' && utils.getActivePlayer(gameObject).plantedThisTurn >= 1 &&
           <button onClick={() => api.turn(gameObject.gameId)}>Turn Cards</button>
         }
         {gameObject.phase === 'trade' &&
           <button onClick={() => api.endTrading(gameObject.gameId)}>End Trading</button>
+        }
+      </div>
+      <div className="global-cards">
+        <div className="expandable-global-title" onClick={() => setIsExpanded(!isExpanded)}>
+          <span className={'global-card-info'}>Global card info</span>
+          <span className={`caret ${isExpanded ? 'rotated' : ''}`}>^</span>
+        </div>
+        {isExpanded &&
+          <div className="expandable-content global-info-content">
+
+            <div className="draw">
+              <h2>Draw</h2>
+              <div className="info-thing-no-title">
+                {gameObject.draw.map((card, index) => (
+                  <Card
+                    card={card}
+                    deleteCard={api.deleteCardFromDraw}
+                    gameId={gameObject.gameId}
+                    index={index}
+                  />
+                ))}
+                <AddCard
+                  onClick={() => api.addCardToDraw(gameObject.gameId, selectedDrawCardName)}
+                  uniqueCardsInDeck={gameObject?.uniqueCardsInDeck}
+                  setSelectedCardName={setSelectedDrawCardName}
+                />
+              </div>
+            </div>
+
+
+            <div className="discard">
+              <h2>Discard</h2>
+              <div className="info-thing-no-title">
+                {gameObject.discard.map((card, index) => (
+                  <Card
+                    card={card}
+                    deleteCard={api.deleteCardFromDiscard}
+                    gameId={gameObject.gameId}
+                    index={index}
+                  />
+                ))}
+                <AddCard
+                  onClick={() => api.addCardToDiscard(gameObject.gameId, selectedDiscardCardName)}
+                  uniqueCardsInDeck={gameObject?.uniqueCardsInDeck}
+                  setSelectedCardName={setSelectedDiscardCardName}
+                />
+              </div>
+            </div>
+
+            {gameObject.turnedCards.length > 0 &&
+              <div className="turned-cards">
+                <h2>Turned Cards</h2>
+                <div className="info-thing-no-title">
+                  {gameObject.turnedCards.map((card, index) => (
+                    <Card
+                      card={card}
+                      gameId={gameObject.gameId}
+                      index={index}
+                    />
+                  ))}
+                </div>
+              </div>
+            }
+
+          </div>
         }
       </div>
       <div className="players">

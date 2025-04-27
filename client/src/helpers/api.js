@@ -172,6 +172,84 @@ export async function addCardToPlantNow(gameId, playerName, cardName) {
   }
 }
 
+export async function addCardToDraw(gameId, cardName) {
+  try {
+    const res = await fetch(`/admin/draw?gameId=${gameId}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        cardName
+      })
+    })
+    const data = await res.json();
+    return data;
+  } catch (err) {
+    console.log(`add card to draw: ${err}`)
+    return { error: err.message };
+  }
+}
+
+export async function deleteCardFromDraw(gameId, drawIndex) {
+  try {
+    const res = await fetch(`/admin/draw?gameId=${gameId}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        drawIndex,
+      })
+    })
+    const data = await res.json();
+    return data;
+  } catch (err) {
+    console.log(`delete card from draw: ${err}`)
+    return { error: err.message };
+  }
+}
+
+export async function addCardToDiscard(gameId, cardName) {
+  try {
+    const res = await fetch(`/admin/discard?gameId=${gameId}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        cardName
+      })
+    })
+    const data = await res.json();
+    return data;
+  } catch (err) {
+    console.log(`add card to discard: ${err}`)
+    return { error: err.message };
+  }
+}
+
+export async function deleteCardFromDiscard(gameId, discardIndex) {
+  try {
+    const res = await fetch(`/admin/discard?gameId=${gameId}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        discardIndex,
+      })
+    })
+    const data = await res.json();
+    return data;
+  } catch (err) {
+    console.log(`delete card from discard: ${err}`)
+    return { error: err.message };
+  }
+}
+
+
+
 // Normal endpoints that are part of the actual game logic - no admin required
 
 export async function joinGame(gameCode, playerName) {

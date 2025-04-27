@@ -15,7 +15,7 @@ function Player({ player, gameObject }) {
     <div className="player">
       <div className="expandable-player-title" onClick={() => setIsExpanded(!isExpanded)}>
         <span className={`name ${isActive ? 'active' : 'inactive'}`}>{player.name}{isActive ? ' (their turn)' : ''}</span>
-        <span className={`caret ${isExpanded ? 'rotated' : ''}`}>^</span>
+        <span className={`caret ${isExpanded ? 'rotated' : 'non-rotated'}`}>^</span>
       </div>
       {isExpanded &&
         <div className="expandable-content player-content">

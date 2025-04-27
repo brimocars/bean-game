@@ -108,6 +108,17 @@ const deleteCardFromDiscard = async (req, res) => {
   }
 };
 
+const autoplantCardsToPlantNow = async (req, res) => {
+  try {
+    const { gameId } = req.query;
+    const gameObject = await lib.autoplantCardsToPlantNow(gameId);
+    res.send({ message: 'Autoplanted from plant now', gameObject });
+  } catch (error) {
+    console.log(`autoplant from plant now: ${error.stack}`);
+    res.status(400).send({ message: error.message });
+  }
+};
+
 module.exports = {
   deleteFromHand,
   addToHand,
@@ -118,4 +129,5 @@ module.exports = {
   addCardToDiscard,
   deleteCardFromDraw,
   deleteCardFromDiscard,
+  autoplantCardsToPlantNow,
 };

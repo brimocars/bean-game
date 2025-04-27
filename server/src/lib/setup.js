@@ -6,13 +6,12 @@ const Card = require('./utils/card.js');
 const gameObjects = require('../db/gameObjects.js');
 
 const defaultBeans = {
-  // TODO: uncomment
-  // wax: new Card([4, 7, 9, 11], 22, 'wax'),
-  // blue: new Card([4, 6, 8, 10], 20, 'blue'),
-  // chili: new Card([3, 6, 8, 9], 18, 'chili'),
-  // stink: new Card([3, 5, 7, 8], 16, 'stink'),
-  // green: new Card([3, 5, 6, 7], 14, 'green'),
-  // soy: new Card([2, 4, 6, 7], 12, 'soy'),
+  wax: new Card([4, 7, 9, 11], 22, 'wax'),
+  blue: new Card([4, 6, 8, 10], 20, 'blue'),
+  chili: new Card([3, 6, 8, 9], 18, 'chili'),
+  stink: new Card([3, 5, 7, 8], 16, 'stink'),
+  green: new Card([3, 5, 6, 7], 14, 'green'),
+  soy: new Card([2, 4, 6, 7], 12, 'soy'),
   black: new Card([2, 4, 5, 6], 10, 'black'),
   red: new Card([2, 3, 4, 5], 8, 'red'),
 };
@@ -31,13 +30,11 @@ const createGame = async (playerName) => {
   }
 
   const gameId = uuidv4();
-  // TODO: uncomment
-  // eslint-disable-next-line no-unused-vars
   const gameCode = `${crypto.randomInt(100000, 999999)}`;
 
   await gameObjects.insert({
     gameId,
-    gameCode: '1', // `${gameCode}`,
+    gameCode: `${gameCode}`,
     players: [{ name: playerName }],
     updateId: uuidv4(),
   });
@@ -152,8 +149,7 @@ const startGame = async (gameId) => {
     player.cardsToPlantNow = [];
   });
 
-  // TODO: uncomment
-  // shuffle(gameObject.players);
+  shuffle(gameObject.players);
   shuffle(deck);
   gameObject.players.forEach((player, index) => {
     player.index = index;

@@ -31,8 +31,8 @@ const join = async (gameCode, name, setName, players) => {
 function game({ gameObject }) {
   const [name, setName] = useState(getRandomName(gameObject.players));
   const [isExpanded, setIsExpanded] = useState(false);
-  const [selectedDrawCardName, setSelectedDrawCardName] = useState(Object.keys(gameObject.uniqueCardsInDeck)[0] || '');
-  const [selectedDiscardCardName, setSelectedDiscardCardName] = useState(Object.keys(gameObject.uniqueCardsInDeck)[0] || '');
+  const [selectedDrawCardName, setSelectedDrawCardName] = useState(gameObject.uniqueCardsInDeck ? Object.keys(gameObject.uniqueCardsInDeck)[0] : '');
+  const [selectedDiscardCardName, setSelectedDiscardCardName] = useState(gameObject.uniqueCardsInDeck ? Object.keys(gameObject.uniqueCardsInDeck)[0] : '');
 
 
   // if the game hasn't started
@@ -79,6 +79,13 @@ function game({ gameObject }) {
         <span className="item-label">gameId: </span><span className="item">{gameObject.gameId}</span>
         <span className="item-label">gameCode: </span><span className="item">{gameObject.gameCode}</span>
         <span className="item-label">phase: </span><span className="item">{gameObject.phase}</span>
+        <span className="item-label">times shuffled: </span><span className="item">{gameObject.timesShuffled}</span>
+        {gameObject.isOver &&
+          <span className="item-label">winner: </span>
+        }
+        {gameObject.isOver &&
+          <span className="item">{gameObject.winner}</span>
+        }
         <DeleteButton
           onClick={() => api.deleteGame(gameObject.gameId)}
         />
@@ -90,11 +97,14 @@ function game({ gameObject }) {
         {gameObject.phase === 'trade' &&
           <button onClick={() => api.endTrading(gameObject.gameId)}>End Trading</button>
         }
+        {gameObject.phase === 'end' &&
+          <button onClick={() => api.autoplantCardsToPlantNow(gameObject.gameId)}>Auto-plant plantNow cards</button>
+        }
       </div>
       <div className="global-cards">
         <div className="expandable-global-title" onClick={() => setIsExpanded(!isExpanded)}>
           <span className={'global-card-info'}>Global card info</span>
-          <span className={`caret ${isExpanded ? 'rotated' : ''}`}>^</span>
+          <span className={`caret ${isExpanded ? 'rotated' : 'non-rotated'}`}>^</span>
         </div>
         {isExpanded &&
           <div className="expandable-content global-info-content">
@@ -105,7 +115,7 @@ function game({ gameObject }) {
                 {gameObject.draw.map((card, index) => (
                   <Card
                     card={card}
-                    deleteCard={api.deleteCardFromDraw}
+                    deleteCard={() => api.deleteCardFromDraw(gameObject.gameId, index)}
                     gameId={gameObject.gameId}
                     index={index}
                   />
@@ -125,7 +135,7 @@ function game({ gameObject }) {
                 {gameObject.discard.map((card, index) => (
                   <Card
                     card={card}
-                    deleteCard={api.deleteCardFromDiscard}
+                    deleteCard={() => api.deleteCardFromDiscard(gameObject.gameId, index)}
                     gameId={gameObject.gameId}
                     index={index}
                   />

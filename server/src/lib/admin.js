@@ -1,6 +1,7 @@
 const { v4: uuidv4 } = require('uuid');
 const gameObjects = require('../db/gameObjects.js');
 const { Phases } = require('./utils/enums.js');
+const { harvestField, endEndPhase } = require('./play.js');
 
 const deleteFromHand = async (gameId, playerName, handIndex) => {
   const gameObject = await gameObjects.get(gameId);
@@ -175,6 +176,36 @@ const deleteFromDiscard = async (gameId, discardIndex) => {
   return gameObject;
 };
 
+const autoplantCardsToPlantNow = async (gameId) => {
+  const gameObject = await gameObjects.get(gameId);
+  if (!gameObject) {
+    throw new Error('Game not found');
+  }
+  gameObject.players.forEach((player) => {
+    if (player.cardsToPlantNow && player.cardsToPlantNow.length > 0) {
+      player.cardsToPlantNow.forEach((card) => {
+        let fieldIndexToPlantIn = player.fields.findIndex((field) => field.card && field.card.name === card.name);
+        if (fieldIndexToPlantIn === -1) {
+          fieldIndexToPlantIn = player.fields.findIndex((field) => field.card === null);
+        }
+        if (fieldIndexToPlantIn === -1) {
+          // Does not care about protected bean clause - this is because this is an admin endpoint, for testing and
+          // debugging and whatnot
+          fieldIndexToPlantIn = 0;
+          harvestField(gameObject, player, player.fields[fieldIndexToPlantIn]);
+        }
+        player.fields[fieldIndexToPlantIn].card = card;
+        player.fields[fieldIndexToPlantIn].amount++;
+      });
+      player.cardsToPlantNow = [];
+    }
+  });
+  endEndPhase(gameObject);
+  gameObject.updateId = uuidv4();
+  await gameObjects.insert(gameObject);
+  return gameObject;
+};
+
 module.exports = {
   deleteFromHand,
   addToHand,
@@ -185,4 +216,5 @@ module.exports = {
   addToDiscard,
   deleteFromDraw,
   deleteFromDiscard,
+  autoplantCardsToPlantNow,
 };

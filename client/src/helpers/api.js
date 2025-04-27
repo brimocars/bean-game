@@ -248,7 +248,18 @@ export async function deleteCardFromDiscard(gameId, discardIndex) {
   }
 }
 
-
+export async function autoplantCardsToPlantNow(gameId) {
+  try {
+    const res = await fetch(`/admin/autoplant?gameId=${gameId}`, {
+      method: 'POST',
+    })
+    const data = await res.json();
+    return data;
+  } catch (err) {
+    console.log(`autoplant cards to plant now: ${err}`)
+    return { error: err.message };
+  }
+}
 
 // Normal endpoints that are part of the actual game logic - no admin required
 

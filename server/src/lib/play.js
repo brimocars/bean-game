@@ -4,8 +4,7 @@ const gameObjects = require('../db/gameObjects.js');
 const { Phases } = require('./utils/enums.js');
 const utils = require('./utils/misc.js');
 
-const shuffleDrawPileOrEndGame = async (gameId) => {
-  const gameObject = await gameObjects.get(gameId);
+const shuffleDrawPileOrEndGame = (gameObject) => {
   if (gameObject.timesShuffled < 2) {
     shuffle(gameObject.discard);
     [gameObject.draw, gameObject.discard] = [gameObject.discard, gameObject.draw];
@@ -16,8 +15,7 @@ const shuffleDrawPileOrEndGame = async (gameId) => {
   return gameObject.isOver;
 };
 
-const endGame = async (gameId) => {
-  const gameObject = await gameObjects.get(gameId);
+const endGame = (gameObject) => {
   gameObject.players.forEach((player) => {
     player.fields.forEach((field) => {
       harvestField(gameObject, player, field);
@@ -30,11 +28,63 @@ const endGame = async (gameId) => {
     console.log(`player ${player.name} has ${player.money} money`);
   });
   const winner = gameObject.players.reduce((w, player) => (player.money > w.money ? player : w), { money: -1 });
+  gameObject.winner = winner.name;
   console.log(`winner is ${winner.name} with ${winner.money} money`);
   return gameResults;
 };
 
+const endEndPhase = async (gameObject) => {
+  if (gameObject.draw.length > gameObject.players.length) {
+    // deck will not run out
+    let playerIndexToDraw = gameObject.activePlayerIndex;
+    for (let i = 0; i < gameObject.players.length; i++) {
+      gameObject.players[playerIndexToDraw].hand.push(gameObject.draw.pop());
+      playerIndexToDraw++;
+      if (playerIndexToDraw >= gameObject.players.length) {
+        playerIndexToDraw = 0;
+      }
+    }
+  } else {
+    // deck will run out
+    const amountToDraw = gameObject.draw.length;
+    const amountToDrawAfter = gameObject.players.length - amountToDraw;
+    let playerIndexToDraw = gameObject.activePlayerIndex;
+    for (let i = 0; i < amountToDraw; i++) {
+      gameObject.players[playerIndexToDraw].hand.push(gameObject.draw.pop());
+      playerIndexToDraw++;
+      if (playerIndexToDraw >= gameObject.players.length) {
+        playerIndexToDraw = 0;
+      }
+    }
+    if (!shuffleDrawPileOrEndGame(gameObject)) {
+      for (let i = 0; i < amountToDrawAfter; i++) {
+        // TODO: maybe fix bug where if only 1 card is in the discard when it gets shuffled,
+        // shuffleDrawPileOrEndGame will need to be called again. But honestly this is unlikely and I have more
+        // important things to do
+        // ^this is also broken for if there are 0 cards in the discard pile
+        const nextCard = gameObject.draw.pop();
+        if (nextCard) {
+          gameObject.players[playerIndexToDraw].hand.push(nextCard);
+        }
+        playerIndexToDraw++;
+        if (playerIndexToDraw >= gameObject.players.length) {
+          playerIndexToDraw = 0;
+        }
+      }
+    }
+
+    if (gameObject.isOver) {
+      gameObject.gameResults = endGame(gameObject);
+    }
+  }
+  gameObject.phase = Phases.PLANT;
+  gameObject.activePlayerIndex = (gameObject.activePlayerIndex + 1) % gameObject.players.length;
+};
+
 const harvestField = (gameObject, player, field) => {
+  if (!field.card) {
+    return null;
+  }
   let moneyToGet = 0;
   const amountInField = field.amount;
   const nameInField = field.card.name;
@@ -111,9 +161,10 @@ const turn = async (gameId) => {
     while (draw.length > 0 && turnedCards.length < 2) {
       turnedCards.push(draw.pop());
     }
-    if (!shuffleDrawPileOrEndGame(gameId)) {
-      while (draw.length > 0 && turnedCards.length < 2) {
-        turnedCards.push(draw.pop());
+    if (!shuffleDrawPileOrEndGame(gameObject)) {
+      const newDraw = gameObject.draw;
+      while (newDraw.length > 0 && turnedCards.length < 2) {
+        turnedCards.push(newDraw.pop());
       }
     }
   } else {
@@ -385,50 +436,7 @@ const plantFromPlantNow = async (gameId, playerName, cardName, fieldIndex) => {
 
   const timeToMoveOn = gameObject.players.every((p) => !p.cardsToPlantNow.length);
   if (timeToMoveOn) {
-    if (gameObject.draw.length > gameObject.players.length) {
-      // deck will not run out
-      let playerIndexToDraw = gameObject.activePlayerIndex;
-      for (let i = 0; i < gameObject.players.length; i++) {
-        gameObject.players[playerIndexToDraw].hand.push(gameObject.draw.pop());
-        playerIndexToDraw++;
-        if (playerIndexToDraw >= gameObject.players.length) {
-          playerIndexToDraw = 0;
-        }
-      }
-    } else {
-      // deck will run out
-      const amountToDraw = gameObject.draw.length;
-      const amountToDrawAfter = gameObject.players.length - amountToDraw;
-      let playerIndexToDraw = gameObject.activePlayerIndex;
-      for (let i = 0; i < amountToDraw; i++) {
-        gameObject.players[playerIndexToDraw].hand.push(gameObject.draw.pop());
-        playerIndexToDraw++;
-        if (playerIndexToDraw >= gameObject.players.length) {
-          playerIndexToDraw = 0;
-        }
-      }
-      if (!shuffleDrawPileOrEndGame(gameId)) {
-        for (let i = 0; i < amountToDrawAfter; i++) {
-          // TODO: maybe fix bug where if only 1 card is in the discard when it gets shuffled,
-          // shuffleDrawPileOrEndGame will need to be called again. But honestly this is unlikely and I have more
-          // important things to do
-          const nextCard = gameObject.draw.pop();
-          if (nextCard) {
-            gameObject.players[playerIndexToDraw].hand.push(nextCard);
-          }
-          playerIndexToDraw++;
-          if (playerIndexToDraw >= gameObject.players.length) {
-            playerIndexToDraw = 0;
-          }
-        }
-      }
-
-      if (gameObject.isOver) {
-        gameObject.gameResults = endGame(gameId);
-      }
-    }
-    gameObject.phase = Phases.PLANT;
-    gameObject.activePlayerIndex = (gameObject.activePlayerIndex + 1) % gameObject.players.length;
+    endEndPhase(gameObject);
   }
   gameObject.updateId = uuidv4();
   await gameObjects.insert(gameObject);
@@ -444,4 +452,6 @@ module.exports = {
   endTradingPhase,
   harvest,
   plantFromPlantNow,
+  harvestField,
+  endEndPhase,
 };

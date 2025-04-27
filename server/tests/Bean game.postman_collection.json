@@ -157,7 +157,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"player\": {\r\n        \"name\": \"d\"\r\n    }\r\n}",
+							"raw": "{\r\n    \"playerName\": \"e\"\r\n\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -359,7 +359,7 @@
 					"response": []
 				},
 				{
-					"name": "offer trade from active",
+					"name": "offer trade",
 					"event": [
 						{
 							"listen": "test",
@@ -382,7 +382,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"trader\": \"c\",\r\n    \"tradee\": \"b\",\r\n    \"cardsToGive\": {\r\n        //\"turnedCards\": [1,0]\r\n        //\"hand\": []\r\n    },\r\n    \"cardsToReceive\": [\"coffee\"]\r\n}",
+							"raw": "{\r\n    \"trader\": \"a\",\r\n    \"tradee\": \"w\",\r\n    \"cardsToGive\": {\r\n        \"turnedCards\": [1]\r\n    },\r\n    \"cardsToReceive\": [\"black\", \"red\", \"red\"]\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -565,7 +565,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"fieldIndex\": 0,\r\n    \"playerName\": \"c\",\r\n    \"cardName\": \"coffee\"\r\n}",
+							"raw": "{\r\n    \"fieldIndex\": 0,\r\n    \"playerName\": \"a\",\r\n    \"cardName\": \"cocoa\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -603,8 +603,7 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"const jsonData = pm.response.json()\r",
-									"pm.environment.set(\"bearerToken\", jsonData.token);"
+									""
 								],
 								"type": "text/javascript",
 								"packages": {}
@@ -703,24 +702,33 @@
 			"response": []
 		},
 		{
-			"name": "get dashboard",
+			"name": "get all games",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// const jsonData = pm.response.json()\r",
+							"// pm.environment.set(\"tradeId\", jsonData.gameObject.activeTrades[0]?.tradeId ?? \"\");"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
 			"request": {
 				"auth": {
-					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "{{bearerToken}}",
-							"type": "string"
-						}
-					]
+					"type": "noauth"
 				},
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{baseUrl}}",
+					"raw": "{{baseUrl}}/game",
 					"host": [
 						"{{baseUrl}}"
+					],
+					"path": [
+						"game"
 					]
 				}
 			},
@@ -757,18 +765,23 @@
 		},
 		{
 			"key": "gameCode",
-			"value": "1",
+			"value": "744914",
 			"type": "default"
 		},
 		{
 			"key": "accessCode",
-			"value": "",
+			"value": "{{baseUrl}}/setup/join?gameCode={{gameCode}}",
 			"type": "default"
 		},
 		{
 			"key": "bearerToken",
 			"value": "",
 			"type": "string"
+		},
+		{
+			"key": "gameId",
+			"value": "b0db1632-9c90-4325-8bed-db8c4226622c",
+			"type": "default"
 		}
 	]
 }

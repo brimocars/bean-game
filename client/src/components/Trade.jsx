@@ -5,7 +5,6 @@ import * as utils from '../helpers/utils';
 import DeleteButton from './DeleteButton';
 import Card from './Card';
 
-// TODO: use the index to track multiple of the same card so that a card can't be selected twice
 function setSelected(selectedValue, index, eachSelectedIndex, setEachSelectedIndex) {
   const currentSelected = eachSelectedIndex;
   currentSelected[index] = selectedValue;
@@ -82,7 +81,7 @@ function trade({ trade, gameObject }) {
     <div className="trade">
       <div className="expandable-trade-title" onClick={() => setIsExpanded(!isExpanded)}>
         <span className='tradeId'>{trade.tradeId}</span>
-        <span className={`caret ${isExpanded ? 'rotated' : ''}`}>^</span>
+        <span className={`caret ${isExpanded ? 'rotated' : 'non-rotated'}`}>^</span>
         <DeleteButton
           onClick={() => api.deleteTrade(gameObject.gameId, trade.tradeId)}
         />
@@ -125,20 +124,20 @@ function trade({ trade, gameObject }) {
             <div className="cards-to-receive-content">
               <div className="chosen-cards-to-receive">
                 {trade.cardsToReceive.map((cardName, index) => (
-                  <div>
-                    <Card
-                      card={gameObject.uniqueCardsInDeck[cardName]}
-                    />
+                  <div className="card-to-receive">
                     <select onChange={(e) => setSelected(e.target.value, index, eachSelectedIndex, setEachSelectedIndex)}>
                       <option></option>
                       {possibleCardSources[cardName].map((card) => (
                         <option value={card.combined}>{card.combined}</option>
                       ))}
                     </select>
+                    <Card
+                      card={gameObject.uniqueCardsInDeck[cardName]}
+                    />
                   </div>
                 ))}
               </div>
-              <button onClick={() => acceptTrade(gameObject.gameId, trade.tradeId, eachSelectedIndex)}>Accept Trade</button>
+              <button className="accept-trade-button" onClick={() => acceptTrade(gameObject.gameId, trade.tradeId, eachSelectedIndex)}>Accept Trade</button>
             </div>
           </div>
         </div>}

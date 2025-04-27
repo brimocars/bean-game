@@ -42,16 +42,6 @@
   }
 }
 
-.caret {
-  grid-column: 2 / 3;
-  grid-row: 1 / 2;
-  margin: 5px;
-  animation: flipOut 0.125s ease-in-out;
-  border-radius: 5px;
-  justify-self: center;
-  align-self: center;
-}
-
 @keyframes flipIn {
   0% {
     transform: rotate(0deg);
@@ -61,9 +51,22 @@
   }
 }
 
+.caret {
+  grid-column: 2 / 3;
+  grid-row: 1 / 2;
+  margin: 5px;
+  border-radius: 5px;
+  justify-self: center;
+  align-self: center;
+}
+
 .rotated {
   transform: rotate(180deg);
   animation: flipIn 0.125s ease-in-out;
+}
+
+.non-rotated {
+  animation: flipOut 0.125s ease-in-out;
 }
 
 .expandable-player-title * {

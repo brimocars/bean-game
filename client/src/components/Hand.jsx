@@ -14,7 +14,7 @@ function hand({ hand, player, gameObject}) {
         {hand?.map((card, index) => (
           <Card 
             card={card}
-            deleteCard={api.deleteCardFromHand}
+            deleteCard={() => api.deleteCardFromHand(gameObject.gameId, player.name, index)}
             gameId={gameObject.gameId}
             playerName={player.name}
             index={index}

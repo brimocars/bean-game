@@ -580,6 +580,8 @@ describe('end trading phase', () => {
   });
 });
 
+// TODO:
 // plant from plant now
 // harvest
 // ending game stuff
+// also all of the admin stuff, probably in a new file

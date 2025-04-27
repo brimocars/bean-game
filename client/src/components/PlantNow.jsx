@@ -3,6 +3,7 @@ import Card from './Card';
 import * as api from '../helpers/api';
 import AddCard from './AddCard';
 import { useState } from 'react'
+import game from './Game';
 
 function plantNow({ cardsToPlantNow, player, gameObject}) {
   const [selectedCardName, setSelectedCardName] = useState(Object.keys(gameObject.uniqueCardsInDeck)[0] || '');
@@ -14,7 +15,7 @@ function plantNow({ cardsToPlantNow, player, gameObject}) {
         {cardsToPlantNow?.map((card, index) => (
           <Card 
             card={card}
-            deleteCard={api.deleteCardFromPlantNow}
+            deleteCard={() => api.deleteCardFromPlantNow(gameObject.gameId, player.name, index)}
             gameId={gameObject.gameId}
             playerName={player.name}
             index={index}

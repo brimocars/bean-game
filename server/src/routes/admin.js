@@ -10,5 +10,6 @@ router.post('/draw', admin.addCardToDraw);
 router.post('/discard', admin.addCardToDiscard);
 router.delete('/draw', admin.deleteCardFromDraw);
 router.delete('/discard', admin.deleteCardFromDiscard);
+router.post('/autoplant', admin.autoplantCardsToPlantNow);
 
 module.exports = router;

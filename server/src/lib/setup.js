@@ -17,7 +17,7 @@ const defaultBeans = {
 };
 
 const coffee = new Card([4, 7, 10, 12], 24, 'coffee');
-const garden = new Card([0, 2, 3, 3], 6, 'garden');
+const garden = new Card([0, 2, 3], 6, 'garden');
 const cocoa = new Card([2, 2, 3, 4], 4, 'cocoa');
 
 const createGame = async (playerName) => {

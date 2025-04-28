@@ -85,7 +85,6 @@ const startGame = async (gameId) => {
 
   const deck = [];
   const uniqueCardsInDeck = {};
-  // eslint-disable-next-line no-unused-vars
   for (const [key, value] of Object.entries(defaultBeans)) {
     for (let i = 0; i < value.amountInDeck; i++) {
       deck.push(value);

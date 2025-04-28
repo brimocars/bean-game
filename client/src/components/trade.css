@@ -175,6 +175,10 @@
   box-sizing: border-box;
 }
 
+.card-to-receive > select {
+  width: 102px;
+}
+
 .source-to-give > * {
   padding: 0px 5px;
 }

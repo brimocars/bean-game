@@ -19,7 +19,10 @@ function acceptTrade(gameId, tradeId, eachSelectedIndex) {
   }
   const chosenCardsToReceive = { hand: [], turnedCards: [] };
   selectedIndexArray.forEach((selectedValue) => {
-    const [source, cardIndex] = selectedValue.split(' ');
+    let [source, cardIndex] = selectedValue.split(' ');
+    if (source === 'turned') {
+      source = 'turnedCards'
+    }
     chosenCardsToReceive[source].push(Number(cardIndex));
   });
 

@@ -17,7 +17,7 @@ const defaultBeans = {
 };
 
 const coffee = new Card([4, 7, 10, 12], 24, 'coffee');
-const garden = new Card([0, 2, 3, 3], 6, 'garden');
+const garden = new Card([0, 2, 3], 6, 'garden');
 const cocoa = new Card([2, 2, 3, 4], 4, 'cocoa');
 
 const createGame = async (playerName) => {
@@ -85,7 +85,6 @@ const startGame = async (gameId) => {
 
   const deck = [];
   const uniqueCardsInDeck = {};
-  // eslint-disable-next-line no-unused-vars
   for (const [key, value] of Object.entries(defaultBeans)) {
     for (let i = 0; i < value.amountInDeck; i++) {
       deck.push(value);

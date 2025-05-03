@@ -127,9 +127,9 @@ const startGame = async (gameId) => {
     case 6:
     case 7:
       for (let i = 0; i < coffee.amountInDeck; i++) {
-        deck.push(cocoa);
+        deck.push(coffee);
       }
-      uniqueCardsInDeck.cocoa = cocoa;
+      uniqueCardsInDeck.coffee = coffee;
 
       gameObject.players.forEach((player) => {
         player.maxFields = 2;
